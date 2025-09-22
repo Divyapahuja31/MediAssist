@@ -75,7 +75,7 @@ This app acts as a **digital assistant** for patients, families, and caregivers.
 
 * **Frontend (Mobile):** React Native 📱
 * **Backend:** Node.js + Express.js 🌐
-* **Database:** MySQL / PostgreSQL 🗄️
+* **Database:** MySQL 
 * **Extras:**
 
   * Firebase Cloud Messaging → Push Notifications 🔔
