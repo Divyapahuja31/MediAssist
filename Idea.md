@@ -116,5 +116,3 @@ A fully functional mobile app that:
 * 📌 Can participate in **hackathons & competitions** as a socially impactful project.
 
 ---
-I premium tier  
-📌 Future scope for wearable device integration for fitness/mood tracking  
