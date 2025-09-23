@@ -8,6 +8,7 @@ import RecordsScreen from '../screens/RecordsScreen';
 import EmergencyScreen from '../screens/EmergencyScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
+
 const Tab = createBottomTabNavigator();
 
 export default function TabNavigator() {
@@ -17,12 +18,12 @@ export default function TabNavigator() {
         headerShown: false,
         tabBarShowLabel: true,
         tabBarStyle: {
-          height: 70,         
-          paddingBottom: 15,  
+          height: 70,
+          paddingBottom: 15,
           paddingTop: 5,
-          backgroundColor: '#ffffff', 
+          backgroundColor: '#ffffff',
         },
-        tabBarIcon: ({ color, size, focused }) => { 
+        tabBarIcon: ({ color, size, focused }) => {
           let iconName;
 
           if (route.name === 'Home') iconName = focused ? 'home' : 'home-outline';
@@ -44,4 +45,4 @@ export default function TabNavigator() {
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
-} 
+}
