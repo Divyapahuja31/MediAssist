@@ -36,7 +36,6 @@ export default function OnboardingScreen1({ navigation }) {
       >
         <Text style={styles.nextText}>Next</Text>
       </TouchableOpacity>
-
       <View style={styles.dotsContainer}>
         <View style={[styles.dot, styles.activeDot]} />
         <View style={styles.dot} />
@@ -68,12 +67,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 20,
     fontFamily: 'Helvetica',
-    marginTop: 20,
+    marginTop: 100,
   },
   image: {
     width: 500,
     height: 500,
     marginBottom: 20,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   subtitle: {
     fontSize: 20,
@@ -84,7 +86,7 @@ const styles = StyleSheet.create({
   },
   nextButton: {
     backgroundColor: "#4A90E2",
-    borderRadius: 25,
+    borderRadius: 40,
     paddingVertical: 12,
     paddingHorizontal: 40,
     marginBottom: 30,
