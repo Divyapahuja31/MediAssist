@@ -43,7 +43,7 @@ export default function OnboardingScreen2({ navigation }) {
           end={{ x: 1, y: 1 }}
           style={styles.getStartedButton} 
         >
-          <Text style={styles.getStartedText}>Get Started</Text>
+          <Text style={styles.getStartedText}>Next</Text>
         </LinearGradient>
       </TouchableOpacity>
 
