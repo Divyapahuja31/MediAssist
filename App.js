@@ -7,6 +7,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import TabNavigator from "./src/navigation/TabNavigator";
 import OnboardingScreen1 from "./src/screens/OnboardingScreen1";
 import OnboardingScreen2 from "./src/screens/OnboardingScreen2";
+import OnboardingScreen3 from "./src/screens/Onboardingscreen3";
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +24,7 @@ export default function App() {
           >
             <Stack.Screen name="OnboardingScreen1" component={OnboardingScreen1} />
           <Stack.Screen name="OnboardingScreen2" component={OnboardingScreen2} />
+          <Stack.Screen name="OnboardingScreen3" component={OnboardingScreen3} />
 
             <Stack.Screen name="Home" component={TabNavigator} />
           </Stack.Navigator>

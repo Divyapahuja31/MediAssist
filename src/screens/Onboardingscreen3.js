@@ -11,7 +11,7 @@ import { LinearGradient } from "expo-linear-gradient";
 
 const { width } = Dimensions.get("window");
 
-export default function OnboardingScreen2({ navigation }) {
+export default function OnboardingScreen3({ navigation }) {
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -22,7 +22,7 @@ export default function OnboardingScreen2({ navigation }) {
       </TouchableOpacity>
 
       <Text style={styles.title}>
-        Never Miss a Dose,{"\n"}Stay Prepared
+        All your Records,{"\n"} Always with You
       </Text>
       <View style={styles.imageContainer}>
         <Image
@@ -33,15 +33,15 @@ export default function OnboardingScreen2({ navigation }) {
       </View>
 
       <Text style={styles.subtitle}>
-        Get smart medicine reminders and instant{"\n"}
-        access to your emergency health card.
+       Securely store prescriptions,reports and{"\n"}
+       more. Access them anytime, anywhere.
       </Text>
-      <TouchableOpacity onPress={() => navigation.replace("OnboardingScreen3")}>
+      <TouchableOpacity onPress={() => navigation.replace("Home")}>
         <LinearGradient
           colors={["#0ea5e9", "#2563eb"]} 
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={styles.getStartedButton} 
+          style={styles.getStartedButton}
         >
           <Text style={styles.getStartedText}>Get Started</Text>
         </LinearGradient>
