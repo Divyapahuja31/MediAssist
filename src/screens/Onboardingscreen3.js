@@ -26,7 +26,7 @@ export default function OnboardingScreen3({ navigation }) {
       </Text>
       <View style={styles.imageContainer}>
         <Image
-          source={require("../../assets/screen3.png")} 
+          source={require("../../assets/3.png")} 
           style={styles.image}
           resizeMode="contain"
         />
