@@ -36,7 +36,7 @@ export default function OnboardingScreen3({ navigation }) {
        Securely store prescriptions,reports and{"\n"}
        more. Access them anytime, anywhere.
       </Text>
-      <TouchableOpacity onPress={() => navigation.replace("Home")}>
+      <TouchableOpacity onPress={() => navigation.replace("Login")}>
         <LinearGradient
           colors={["#0ea5e9", "#2563eb"]} 
           start={{ x: 0, y: 0 }}
@@ -49,6 +49,7 @@ export default function OnboardingScreen3({ navigation }) {
 
       <View style={styles.dotsContainer}>
         <View style={[styles.dot, styles.activeDot]} />
+         <View style={[styles.dot, styles.activeDot]} />
          <View style={[styles.dot, styles.activeDot]} />
         <View style={styles.dot} />
         <View style={styles.dot} />
