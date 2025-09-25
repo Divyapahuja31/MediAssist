@@ -132,97 +132,104 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    paddingHorizontal: 28,
-    paddingTop: 36,
-    backgroundColor: "#fbfdff",
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "700",
-    marginTop: 6,
-  },
-  subtitle: {
-    fontSize: 13,
-    color: "#6b7280",
-    marginBottom: 40,
-    textAlign: "center",
-  },
-  image:{
-    width: 350,
-    height: 350,
-    resizeMode: 'contain'
-  },
-  logoContainer:{
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20
-  },
-  input: {
-    width: "100%",
-    marginBottom: 12,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-  },
-  forgotPassword: {
-    width: '100%',
-    alignItems: 'flex-end',
-    marginBottom: 20
-  },
-  forgotPasswordText: {
-    color: '#6b7280',
-    fontSize: 13
-  },
-  gradient: {
-    paddingVertical: 14,
-    borderRadius: 28,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  gradientText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  orRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    marginVertical: 14,
-  },
-  line: {
-    flex: 1,
-    height: 1,
-    backgroundColor: "#e5e7eb",
-  },
-  socialRow: {
-    flexDirection: "row",
-    width: "100%",
-    justifyContent: "space-around",
-    marginBottom: 6,
-  },
-  iconBtn: {
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    backgroundColor: "#fff",
-    borderRadius: 40,
-    width: 58,
-    height: 58,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  signupText: {
-    marginTop: 10,
-    color: "#6b7280",
-  },
-});
+    container: {
+      flex: 1,
+      alignItems: "center",
+      paddingHorizontal: 24, 
+      paddingTop: 48, 
+      backgroundColor: "#f9fafb", 
+    },
+    title: {
+      fontSize: 30,
+      fontWeight: "700",
+      marginTop: 16, 
+      color: "#111827", 
+    },
+    subtitle: {
+      fontSize: 14, 
+      color: "#6b7280",
+      marginBottom: 32, 
+      textAlign: "center",
+      lineHeight: 20, 
+    },
+    image: {
+      width: 280, 
+      height: 280,
+      resizeMode: "contain",
+    },
+    logoContainer: {
+      justifyContent: "center",
+      alignItems: "center",
+      marginBottom: 16, 
+    },
+    input: {
+      width: "100%",
+      marginBottom: 16, 
+      backgroundColor: "#fff",
+      borderRadius: 10, 
+      borderWidth: 1,
+      borderColor: "#d1d5db", 
+      paddingHorizontal: 12, 
+      height: 50, 
+    },
+    forgotPassword: {
+      width: "100%",
+      alignItems: "flex-end",
+      marginBottom: 24, 
+    },
+    forgotPasswordText: {
+      color: "#2563eb",
+      fontSize: 14,
+      fontWeight: "500",
+    },
+    gradient: {
+      paddingVertical: 14,
+      borderRadius: 28,
+      alignItems: "center",
+      justifyContent: "center",
+      marginTop: 16, 
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.1,
+      shadowRadius: 6,
+      elevation: 3,
+    },
+    gradientText: {
+      color: "#fff",
+      fontSize: 18,
+      fontWeight: "700",
+    },
+    orRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      width: "100%",
+      marginVertical: 24, 
+    },
+    line: {
+      flex: 1,
+      height: 1,
+      backgroundColor: "#e5e7eb",
+    },
+    socialRow: {
+      flexDirection: "row",
+      width: "100%",
+      justifyContent: "space-around",
+      marginBottom: 24, 
+    },
+    iconBtn: {
+      borderWidth: 1,
+      borderColor: "#d1d5db",
+      backgroundColor: "#fff",
+      borderRadius: 40,
+      width: 60,
+      height: 60,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    signupText: {
+      marginTop: 16, 
+      color: "#6b7280",
+      fontSize: 14,
+      textAlign: "center",
+    },
+  });
