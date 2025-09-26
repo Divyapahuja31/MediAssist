@@ -1,14 +1,21 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
-export default function QuickActions({ onAction }) {
+export default function QuickActions() {
+  const navigation = useNavigation();
+
   const actions = [
-    { id: 1, title: "Add Medicine", icon: "add-circle", color: "#38bdf8" },
-    { id: 2, title: "Upload Prescription", icon: "cloud-upload", color: "#38bdf8" },
-    { id: 3, title: "Emergency Card", icon: "shield-alert", color: "#f87171" },
-    { id: 4, title: "Health Journal", icon: "book", color: "#34d399" },
+    { id: 1, title: "Add Medicine", icon: "add-circle", color: "#38bdf8", screen: "AddMedicine" },
+    { id: 2, title: "Upload Prescription", icon: "cloud-upload", color: "#38bdf8", screen: "UploadPrescription" },
+    { id: 3, title: "Emergency Card", icon: "shield-alert", color: "#f87171", screen: "EmergencyCard" },
+    { id: 4, title: "Health Journal", icon: "book", color: "#34d399", screen: "HealthJournal" },
   ];
+
+  const goToScreen = (screen) => {
+    navigation.navigate(screen); 
+  };
 
   return (
     <View style={styles.container}>
@@ -18,7 +25,7 @@ export default function QuickActions({ onAction }) {
           <TouchableOpacity
             key={item.id}
             style={[styles.card, { backgroundColor: item.color + "20" }]}
-            onPress={() => onAction?.(item.title)}
+            onPress={() => goToScreen(item.screen)} 
           >
             <View style={[styles.iconContainer, { backgroundColor: item.color }]}>
               {item.icon === "shield-alert" ? (
@@ -53,7 +60,6 @@ const styles = StyleSheet.create({
   },
   card: {
     width: "48%",
-    backgroundColor: "#f3f4f6",
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,

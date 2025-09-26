@@ -3,14 +3,16 @@ import { StatusBar } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-
 import LoginScreen from "./src/screens/LoginScreen";
 import TabNavigator from "./src/navigation/TabNavigator";
 import OnboardingScreen1 from "./src/screens/OnboardingScreen1";
 import OnboardingScreen2 from "./src/screens/OnboardingScreen2";
 import OnboardingScreen3 from "./src/screens/Onboardingscreen3";
-
 import { AuthProvider, AuthContext } from "./src/context/AuthContext";
+import AddMedicineScreen from "./src/screens/AddMedicineScreen";
+import UploadPrescriptionScreen from "./src/screens/UploadPrescriptionScreen";
+import EmergencyCardScreen from "./src/screens/EmergencyCardScreen";
+import HealthJournalScreen from "./src/screens/HealthJournalScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,24 +22,24 @@ function RootNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {user ? (
-
-        <Stack.Screen name="Home" component={TabNavigator} />
-      ) : (
-
         <>
-          <Stack.Screen
-            name="OnboardingScreen1"
-            component={OnboardingScreen1}
-          />
-          <Stack.Screen
-            name="OnboardingScreen2"
-            component={OnboardingScreen2}
-          />
-          <Stack.Screen
-            name="OnboardingScreen3"
-            component={OnboardingScreen3}
-          />
+          <Stack.Screen name="Home" component={TabNavigator} />
+          <Stack.Screen name="AddMedicine" component={AddMedicineScreen} />
+          <Stack.Screen name="UploadPrescription" component={UploadPrescriptionScreen} />
+          <Stack.Screen name="EmergencyCard" component={EmergencyCardScreen} />
+          <Stack.Screen name="HealthJournal" component={HealthJournalScreen} />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="OnboardingScreen1" component={OnboardingScreen1} />
+          <Stack.Screen name="OnboardingScreen2" component={OnboardingScreen2} />
+          <Stack.Screen name="OnboardingScreen3" component={OnboardingScreen3} />
           <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Home" component={TabNavigator} />
+          <Stack.Screen name="AddMedicine" component={AddMedicineScreen} />
+          <Stack.Screen name="UploadPrescription" component={UploadPrescriptionScreen} />
+          <Stack.Screen name="EmergencyCard" component={EmergencyCardScreen} />
+          <Stack.Screen name="HealthJournal" component={HealthJournalScreen} />
         </>
       )}
     </Stack.Navigator>

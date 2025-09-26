@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 1200));
 
-      // ✅ Accept ANY email + password for now
+      // Accept ANY email + password for now
       if (email && password) {
         const user = { id: Date.now(), name: "Demo User", email };
         dispatch({ type: "LOGIN_SUCCESS", payload: user });
