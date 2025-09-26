@@ -1,43 +1,45 @@
-import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
 
-export default function NextDoseCard({ dose }) {
+export default function NextDoseCard({ time, medicine, note }) {
   return (
-    <View style={styles.card}>
+    <View style={styles.container}>
       <Text style={styles.label}>Next Dose</Text>
-      <Text style={styles.time}>{dose.time}</Text>
-      <Text style={styles.name}>{dose.name}</Text>
-      <Text style={styles.note}>{dose.note}</Text>
+      <Text style={styles.time}>{time}</Text>
+      <Text style={styles.medicine}>{medicine}</Text>
+      <Text style={styles.note}>{note}</Text>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    marginHorizontal: 20,
-    marginTop: 20,
+  container: {
+    backgroundColor: "#bae6fd",
     padding: 20,
     borderRadius: 16,
-    backgroundColor: '#4fd1c5'
+    marginVertical: 12,
+    marginHorizontal: 20,
   },
   label: {
-    color: '#fff',
     fontSize: 14,
-    marginBottom: 5
+    color: "#0369a1",
+    fontWeight: "600",
+    marginBottom: 8,
   },
   time: {
-    color: '#fff',
-    fontSize: 32,
-    fontWeight: 'bold'
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#000",
   },
-  name: {
-    color: '#fff',
-    fontSize: 18,
-    marginTop: 10
+  medicine: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginTop: 4,
+    color: "#000",
   },
   note: {
-    color: '#e0f2f1',
     fontSize: 14,
-    marginTop: 4
-  }
-})
+    color: "#6b7280",
+    marginTop: 2,
+  },
+});

@@ -1,26 +1,37 @@
-import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
-import MedicineCard from './MedicineCard'
+import React from "react";
+import { View, Text, FlatList, StyleSheet } from "react-native";
+import MedicineCard from "./MedicineCard";
 
-export default function MedicineList({ items }) {
+export default function MedicineList({ medicines }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Today's Medicines</Text>
-      {items.map(med => (
-        <MedicineCard key={med.id} item={med} />
-      ))}
+      <FlatList
+        data={medicines}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <MedicineCard
+            name={item.name}
+            dose={item.dose}
+            time={item.time}
+            taken={item.taken}
+          />
+        )}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20
+    marginTop: 20,
   },
   title: {
-    marginHorizontal: 20,
     fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 10
-  }
-})
+    fontWeight: "700",
+    marginBottom: 10,
+    marginHorizontal: 20,
+    color: "#000",
+  },
+});

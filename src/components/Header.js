@@ -1,41 +1,42 @@
-import React from 'react'
-import { View, Text, Image, StyleSheet } from 'react-native'
+import React from "react";
+import { View, Text, StyleSheet, Image } from "react-native";
 
-export default function Header({ userName = 'Krit' }) {
+export default function Header({ name }) {
   return (
     <View style={styles.container}>
       <View>
-        <Text style={styles.greeting}>Hello,</Text>
-        <Text style={styles.name}>Hello, {userName}!</Text>
+        <Text style={styles.greeting}>Good Afternoon, {name}!</Text>
+        <Text style={styles.subtitle}>Your health is looking great today</Text>
       </View>
       <Image
-        source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRH6gP2cXHCBfE3Q4snVK7RZuquprmqEBFHkg&s' }}
+        source={{ uri: "https://randomuser.me/api/portraits/women/44.jpg" }}
         style={styles.avatar}
       />
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 50,
-    marginHorizontal: 20
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 20,
+    paddingHorizontal: 20,
   },
   greeting: {
-    fontSize: 14,
-    color: '#6b7280'
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#000",
   },
-  name: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginTop: 2
+  subtitle: {
+    fontSize: 14,
+    color: "#6b7280",
+    marginTop: 4,
   },
   avatar: {
     width: 40,
     height: 40,
-    borderRadius: 20
-  }
-})
+    borderRadius: 20,
+  },
+});

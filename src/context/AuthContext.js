@@ -1,13 +1,11 @@
 import React, { createContext, useReducer } from "react";
 
-// Initial state
 const initialState = {
   user: null,
   loading: false,
   error: null,
 };
 
-// Reducer
 function authReducer(state, action) {
   switch (action.type) {
     case "LOGIN_START":
@@ -30,18 +28,18 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  // Mock login function (replace with API call)
   const login = async (email, password) => {
     dispatch({ type: "LOGIN_START" });
     try {
-      // fake delay
+      // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 1200));
 
-      if (email === "test@mail.com" && password === "123456") {
-        const user = { id: 1, name: "Divya", email };
+      // ✅ Accept ANY email + password for now
+      if (email && password) {
+        const user = { id: Date.now(), name: "Demo User", email };
         dispatch({ type: "LOGIN_SUCCESS", payload: user });
       } else {
-        throw new Error("Invalid credentials");
+        throw new Error("Email and password are required");
       }
     } catch (err) {
       dispatch({ type: "LOGIN_ERROR", payload: err.message });
