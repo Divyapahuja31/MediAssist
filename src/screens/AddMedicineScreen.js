@@ -51,7 +51,7 @@ const AddMedicineScreen = () => {
 
       <TextInput style={styles.input} placeholder="Start Date - End Date" />
 
-      <TouchableOpacity style={styles.button} onPress={() => { /* save logic */ navigation.goBack(); }}>
+      <TouchableOpacity style={styles.button} onPress={() => { navigation.goBack(); }}>
         <Text style={styles.buttonText}>Save Medicine</Text>
       </TouchableOpacity>
     </SafeAreaView>

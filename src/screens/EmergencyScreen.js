@@ -35,4 +35,4 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingHorizontal: 20,
   },
-});
+}); 
