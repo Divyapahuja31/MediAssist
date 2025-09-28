@@ -6,7 +6,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
+  Dimensions,
 } from "react-native";
+
+const { width, height } = Dimensions.get("window");
 
 export default function OnboardingScreen1({ navigation }) {
   return (
@@ -18,16 +21,16 @@ export default function OnboardingScreen1({ navigation }) {
         <Text style={styles.skipText}>Skip</Text>
       </TouchableOpacity>
 
-      <Text style={styles.title}>Simplifiy Your{"\n"}Health Journey</Text>
+      <Text style={styles.title}>Simplify Your{"\n"}Health Journey</Text>
 
       <Image
-  source={require("../../assets/onboard1.png")}
-  style={styles.image}
-  resizeMode="contain"
-/>
+        source={require("../../assets/onboard1.png")}
+        style={styles.image}
+        resizeMode="contain"
+      />
       <Text style={styles.subtitle}>
         Manage medicines, store records, and{"\n"}
-        access emergency info—all you one place.
+        access emergency info—all in one place.
       </Text>
 
       <TouchableOpacity
@@ -62,27 +65,24 @@ const styles = StyleSheet.create({
     color: "#4A90E2",
   },
   title: {
-    fontSize: 40,
+    fontSize: width * 0.08, // Adjust font size based on screen width
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 20,
-    fontFamily: 'Helvetica',
-    marginTop: 100,
+    fontFamily: "Helvetica",
+    marginTop: height * 0.1, 
   },
   image: {
-    width: 500,
-    height: 500,
+    width: width * 0.8, 
+    height: height * 0.4,
     marginBottom: 20,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
   },
   subtitle: {
-    fontSize: 20,
+    fontSize: width * 0.045, 
     color: "#555",
     textAlign: "center",
     marginBottom: 30,
-    lineHeight: 20,
+    lineHeight: width * 0.05, 
   },
   nextButton: {
     backgroundColor: "#4A90E2",
