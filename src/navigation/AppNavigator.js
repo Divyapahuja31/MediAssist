@@ -11,15 +11,15 @@ import {
 import { TextInput, Text, Snackbar, IconButton } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import { AuthContext } from "../context/AuthContext";
+import SignUpScreen from "../screens/SignUpScreen";
 
 const { width, height } = Dimensions.get("window"); 
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen() {
   const { login, loading, error } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (error) setErr(error);
@@ -64,15 +64,8 @@ export default function LoginScreen({ navigation }) {
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
-          secureTextEntry={!showPassword}
+          secureTextEntry
           left={<TextInput.Icon name="lock" color="#6b7280" />}
-          right={
-            <TextInput.Icon
-              name={showPassword ? "eye-off" : "eye"}
-              color="#6b7280"
-              onPress={() => setShowPassword(!showPassword)}
-            />
-          }
           style={styles.input}
         />
         
@@ -124,7 +117,7 @@ export default function LoginScreen({ navigation }) {
           />
         </View>
 
-        <TouchableOpacity onPress={() => navigation.navigate("SignUpScreen")}>
+        <TouchableOpacity onPress={() => setErr("Sign up flow not added yet")}>
           <Text style={styles.signupText}>
             Don't have your account?{" "}
             <Text style={{ color: "#1976d2" }}>Sign Up</Text>
