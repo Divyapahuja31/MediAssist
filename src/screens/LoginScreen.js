@@ -6,16 +6,16 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
-  Dimensions
+  ScrollView,
+  useWindowDimensions
 } from "react-native";
 import { TextInput, Text, Snackbar, IconButton } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
-import { AuthContext } from "../context/AuthContext";
-
-const { width, height } = Dimensions.get("window"); 
+import { AuthContext } from "../context/AuthContext"; 
 
 export default function LoginScreen({ navigation }) {
   const { login, loading, error } = useContext(AuthContext);
+  const { width, height } = useWindowDimensions();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
@@ -36,11 +36,18 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
+  const styles = getStyles(width, height);
+
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
       style={{ flex: 1 }}
     >
+      <ScrollView 
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
       <View style={styles.container}>
         <View style={styles.logoContainer}>
             <Image source={require("../../assets/logo.png")} style={styles.image} />
@@ -124,10 +131,10 @@ export default function LoginScreen({ navigation }) {
           />
         </View>
 
-        <TouchableOpacity onPress={() => navigation.navigate("SignUpScreen")}>
+        <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
           <Text style={styles.signupText}>
-            Don't have your account?{" "}
-            <Text style={{ color: "#1976d2" }}>Sign Up</Text>
+            Don't have an account?{" "}
+            <Text style={styles.signupLink}>Sign Up</Text>
           </Text>
         </TouchableOpacity>
 
@@ -139,109 +146,119 @@ export default function LoginScreen({ navigation }) {
           {err}
         </Snackbar>
       </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
 
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      alignItems: "center",
-      paddingHorizontal: width * 0.06, 
-      paddingTop: height * 0.06, 
-      backgroundColor: "#f9fafb",
-    },
-    title: {
-      fontSize: width * 0.08, 
-      fontWeight: "700",
-      marginTop: height * 0.02, 
-      color: "#111827",
-    },
-    subtitle: {
-      fontSize: width * 0.035, 
-      color: "#6b7280",
-      marginBottom: height * 0.04, 
-      textAlign: "center",
-      lineHeight: width * 0.05, 
-    },
-    image: {
-      width: width * 0.7,
-      height: height * 0.3, 
-      resizeMode: "contain",
-    },
-    logoContainer: {
-      justifyContent: "center",
-      alignItems: "center",
-      marginBottom: height * 0.02, 
-    },
-    input: {
-      width: "100%",
-      marginBottom: height * 0.02, 
-      backgroundColor: "#fff",
-      borderRadius: 10,
-      borderWidth: 1,
-      borderColor: "#d1d5db",
-      paddingHorizontal: width * 0.03, 
-      height: height * 0.06, 
-    },
-    forgotPassword: {
-      width: "100%",
-      alignItems: "flex-end",
-      marginBottom: height * 0.03, 
-    },
-    forgotPasswordText: {
-      color: "#2563eb",
-      fontSize: width * 0.035, 
-      fontWeight: "500",
-    },
-    gradient: {
-      paddingVertical: height * 0.02,
-      borderRadius: 28,
-      alignItems: "center",
-      justifyContent: "center",
-      marginTop: height * 0.02, 
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.1,
-      shadowRadius: 6,
-      elevation: 3,
-    },
-    gradientText: {
-      color: "#fff",
-      fontSize: width * 0.045, 
-      fontWeight: "700",
-    },
-    orRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      width: "100%",
-      marginVertical: height * 0.03, 
-    },
-    line: {
-      flex: 1,
-      height: 1,
-      backgroundColor: "#e5e7eb",
-    },
-    socialRow: {
-      flexDirection: "row",
-      width: "100%",
-      justifyContent: "space-around",
-      marginBottom: height * 0.03, 
-    },
-    iconBtn: {
-      borderWidth: 1,
-      borderColor: "#d1d5db",
-      backgroundColor: "#fff",
-      borderRadius: 40,
-      width: width * 0.15, 
-      height: width * 0.15, 
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    signupText: {
-      marginTop: height * 0.02, 
-      color: "#6b7280",
-      fontSize: width * 0.035, 
-      textAlign: "center",
-    },
-  });
+const getStyles = (width, height) => StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+    backgroundColor: "#f9fafb",
+  },
+  container: {
+    flex: 1,
+    alignItems: "center",
+    paddingHorizontal: Math.max(20, width * 0.06),
+    paddingTop: Platform.OS === "ios" ? Math.max(40, height * 0.05) : Math.max(30, height * 0.04),
+    paddingBottom: 20,
+    backgroundColor: "#f9fafb",
+  },
+  title: {
+    fontSize: Math.min(32, Math.max(24, width * 0.075)),
+    fontWeight: "700",
+    marginTop: Math.max(10, height * 0.015),
+    color: "#111827",
+  },
+  subtitle: {
+    fontSize: Math.min(16, Math.max(13, width * 0.038)),
+    color: "#6b7280",
+    marginBottom: Math.max(20, height * 0.03),
+    marginTop: Math.max(8, height * 0.01),
+    textAlign: "center",
+    lineHeight: Math.min(22, Math.max(18, width * 0.05)),
+    paddingHorizontal: 10,
+  },
+  image: {
+    width: Math.min(280, width * 0.7),
+    height: Math.min(200, height * 0.25),
+    resizeMode: "contain",
+  },
+  logoContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: Math.max(15, height * 0.02),
+  },
+  input: {
+    width: "100%",
+    marginBottom: Math.max(12, height * 0.018),
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#d1d5db",
+    fontSize: Math.min(16, Math.max(14, width * 0.04)),
+  },
+  forgotPassword: {
+    width: "100%",
+    alignItems: "flex-end",
+    marginBottom: Math.max(15, height * 0.02),
+  },
+  forgotPasswordText: {
+    color: "#2563eb",
+    fontSize: Math.min(15, Math.max(13, width * 0.037)),
+    fontWeight: "500",
+  },
+  gradient: {
+    paddingVertical: Math.max(14, height * 0.018),
+    borderRadius: 28,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: Math.max(10, height * 0.015),
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  gradientText: {
+    color: "#fff",
+    fontSize: Math.min(18, Math.max(16, width * 0.045)),
+    fontWeight: "700",
+  },
+  orRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    marginVertical: Math.max(20, height * 0.025),
+  },
+  line: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#e5e7eb",
+  },
+  socialRow: {
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-around",
+    marginBottom: Math.max(20, height * 0.025),
+    paddingHorizontal: width * 0.1,
+  },
+  iconBtn: {
+    borderWidth: 1,
+    borderColor: "#d1d5db",
+    backgroundColor: "#fff",
+    borderRadius: 50,
+    width: Math.min(60, width * 0.15),
+    height: Math.min(60, width * 0.15),
+  },
+  signupText: {
+    marginTop: Math.max(15, height * 0.02),
+    color: "#6b7280",
+    fontSize: Math.min(15, Math.max(13, width * 0.037)),
+    textAlign: "center",
+  },
+  signupLink: {
+    color: "#1976d2",
+    fontWeight: "600",
+  },
+});
