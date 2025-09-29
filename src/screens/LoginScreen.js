@@ -4,11 +4,15 @@ import {
   StyleSheet,
   TouchableOpacity,
   KeyboardAvoidingView,
-  Platform,Image
+  Platform,
+  Image,
+  Dimensions
 } from "react-native";
 import { TextInput, Text, Snackbar, IconButton } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import { AuthContext } from "../context/AuthContext";
+
+const { width, height } = Dimensions.get("window"); 
 
 export default function LoginScreen() {
   const { login, loading, error } = useContext(AuthContext);
@@ -135,59 +139,59 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       alignItems: "center",
-      paddingHorizontal: 24, 
-      paddingTop: 48, 
-      backgroundColor: "#f9fafb", 
+      paddingHorizontal: width * 0.06, 
+      paddingTop: height * 0.06, 
+      backgroundColor: "#f9fafb",
     },
     title: {
-      fontSize: 30,
+      fontSize: width * 0.08, 
       fontWeight: "700",
-      marginTop: 16, 
-      color: "#111827", 
+      marginTop: height * 0.02, 
+      color: "#111827",
     },
     subtitle: {
-      fontSize: 14, 
+      fontSize: width * 0.035, 
       color: "#6b7280",
-      marginBottom: 32, 
+      marginBottom: height * 0.04, 
       textAlign: "center",
-      lineHeight: 20, 
+      lineHeight: width * 0.05, 
     },
     image: {
-      width: 280, 
-      height: 280,
+      width: width * 0.7,
+      height: height * 0.3, 
       resizeMode: "contain",
     },
     logoContainer: {
       justifyContent: "center",
       alignItems: "center",
-      marginBottom: 16, 
+      marginBottom: height * 0.02, 
     },
     input: {
       width: "100%",
-      marginBottom: 16, 
+      marginBottom: height * 0.02, 
       backgroundColor: "#fff",
-      borderRadius: 10, 
+      borderRadius: 10,
       borderWidth: 1,
-      borderColor: "#d1d5db", 
-      paddingHorizontal: 12, 
-      height: 50, 
+      borderColor: "#d1d5db",
+      paddingHorizontal: width * 0.03, 
+      height: height * 0.06, 
     },
     forgotPassword: {
       width: "100%",
       alignItems: "flex-end",
-      marginBottom: 24, 
+      marginBottom: height * 0.03, 
     },
     forgotPasswordText: {
       color: "#2563eb",
-      fontSize: 14,
+      fontSize: width * 0.035, 
       fontWeight: "500",
     },
     gradient: {
-      paddingVertical: 14,
+      paddingVertical: height * 0.02,
       borderRadius: 28,
       alignItems: "center",
       justifyContent: "center",
-      marginTop: 16, 
+      marginTop: height * 0.02, 
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.1,
@@ -196,14 +200,14 @@ const styles = StyleSheet.create({
     },
     gradientText: {
       color: "#fff",
-      fontSize: 18,
+      fontSize: width * 0.045, 
       fontWeight: "700",
     },
     orRow: {
       flexDirection: "row",
       alignItems: "center",
       width: "100%",
-      marginVertical: 24, 
+      marginVertical: height * 0.03, 
     },
     line: {
       flex: 1,
@@ -214,22 +218,22 @@ const styles = StyleSheet.create({
       flexDirection: "row",
       width: "100%",
       justifyContent: "space-around",
-      marginBottom: 24, 
+      marginBottom: height * 0.03, 
     },
     iconBtn: {
       borderWidth: 1,
       borderColor: "#d1d5db",
       backgroundColor: "#fff",
       borderRadius: 40,
-      width: 60,
-      height: 60,
+      width: width * 0.15, 
+      height: width * 0.15, 
       alignItems: "center",
       justifyContent: "center",
     },
     signupText: {
-      marginTop: 16, 
+      marginTop: height * 0.02, 
       color: "#6b7280",
-      fontSize: 14,
+      fontSize: width * 0.035, 
       textAlign: "center",
     },
   });
