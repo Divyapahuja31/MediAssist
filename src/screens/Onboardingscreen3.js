@@ -48,11 +48,9 @@ export default function OnboardingScreen3({ navigation }) {
       </TouchableOpacity>
 
       <View style={styles.dotsContainer}>
-        <View style={[styles.dot, styles.activeDot]} />
-         <View style={[styles.dot, styles.activeDot]} />
-         <View style={[styles.dot, styles.activeDot]} />
-        <View style={styles.dot} />
-        <View style={styles.dot} />
+        <View style={styles.dot} /> 
+        <View style={styles.dot} /> 
+        <View style={[styles.dot, styles.activeDot]} /> 
       </View>
     </View>
   );
@@ -63,13 +61,14 @@ const styles = StyleSheet.create({
       flex: 1,
       backgroundColor: "#fff",
       alignItems: "center",
-      justifyContent: "flex-start",
+      justifyContent: "space-between",
       paddingHorizontal: 24,
-      paddingTop: 40, 
+      paddingTop: 60,
+      paddingBottom: 40,
     },
     skipButton: {
       position: "absolute",
-      top: 40, 
+      top: 20,
       right: 20,
     },
     skipText: {
@@ -78,18 +77,18 @@ const styles = StyleSheet.create({
       fontWeight: "500",
     },
     title: {
-      fontSize: 40, 
+      fontSize: 36,
       fontWeight: "700",
       textAlign: "center",
-      marginTop: 40, 
-      marginBottom: 30, 
+      marginTop: 20,
+      marginBottom: 20,
       color: "#000",
     },
     imageContainer: {
       flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
-      marginVertical: 20,
+      marginVertical: 10,
     },
     image: {
       width: width * 0.85, 
@@ -97,25 +96,25 @@ const styles = StyleSheet.create({
       marginHorizontal: 12,
     },
     subtitle: {
-      fontSize: 16, 
+      fontSize: 16,
       color: "#666",
       textAlign: "center",
-      lineHeight: 24, 
-      marginTop: 20, 
-      marginBottom: 30, 
+      lineHeight: 22,
+      marginTop: 10,
+      marginBottom: 20,
     },
     getStartedButton: {
-      width: width * 0.7, 
-      paddingVertical: 16, 
-      borderRadius: 30,
+      width: width * 0.8,
+      paddingVertical: 14,
+      borderRadius: 25,
       alignItems: "center",
       justifyContent: "center",
       shadowColor: "#000",
-      shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.2,
-      shadowRadius: 3,
-      elevation: 3,
-      marginTop: 20,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.15,
+      shadowRadius: 2,
+      elevation: 2,
+      marginTop: 10,
     },
     getStartedText: {
       color: "#fff",
@@ -126,16 +125,16 @@ const styles = StyleSheet.create({
     dotsContainer: {
       flexDirection: "row",
       justifyContent: "center",
-      marginTop: 40,
+      marginTop: 20,
     },
     dot: {
-      width: 10, 
-      height: 10,
-      borderRadius: 5,
+      width: 8,
+      height: 8,
+      borderRadius: 4,
       backgroundColor: "#ccc",
-      marginHorizontal: 6, 
+      marginHorizontal: 4,
     },
     activeDot: {
-      backgroundColor: "#0ea5e9",
+      backgroundColor: "#2563eb",
     },
   });

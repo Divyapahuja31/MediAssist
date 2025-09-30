@@ -42,6 +42,7 @@ export default function OnboardingScreen1({ navigation }) {
       <View style={styles.dotsContainer}>
         <View style={[styles.dot, styles.activeDot]} />
         <View style={styles.dot} />
+        <View style={styles.dot} /> 
       </View>
     </SafeAreaView>
   );
@@ -65,7 +66,7 @@ const styles = StyleSheet.create({
     color: "#4A90E2",
   },
   title: {
-    fontSize: width * 0.08, // Adjust font size based on screen width
+    fontSize: width * 0.08, 
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 20,

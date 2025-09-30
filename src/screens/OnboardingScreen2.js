@@ -48,9 +48,8 @@ export default function OnboardingScreen2({ navigation }) {
       </TouchableOpacity>
 
       <View style={styles.dotsContainer}>
-        <View style={[styles.dot, styles.activeDot]} />
-         <View style={[styles.dot, styles.activeDot]} />
         <View style={styles.dot} />
+        <View style={[styles.dot, styles.activeDot]} />
         <View style={styles.dot} />
       </View>
     </View>
