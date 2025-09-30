@@ -147,8 +147,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9fafb",
   },
   logo: {
-    width: 200,
-    height: 150,
+    width: 250,
+    height: 200,
     resizeMode: "contain",
     marginBottom: 20,
   },
