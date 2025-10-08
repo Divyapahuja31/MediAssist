@@ -42,9 +42,11 @@ export default function LoginScreen({ navigation }) {
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
+        scrollEnabled={false}
+        showsVerticalScrollIndicator={false}
       >
         <View style={styles.container}>
-          <Image source={require("../../assets/logo.png")} style={styles.logo} />
+          <Image source={require("../../assets/logo1.png")} style={styles.logo} />
 
           <Text style={styles.title}>Welcome back!</Text>
           <Text style={styles.subtitle}>
@@ -141,16 +143,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: 24,
-    paddingTop: 50,
-    paddingBottom: 20,
+    paddingTop: 24,
+    paddingBottom: 24,
     backgroundColor: "#f9fafb",
   },
   logo: {
-    width: 250,
-    height: 200,
+    width: 160,
+    height: 160,
     resizeMode: "contain",
-    marginBottom: 20,
+    marginBottom: 8,
   },
   title: {
     fontSize: 28,
@@ -162,7 +165,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "#6b7280",
     textAlign: "center",
-    marginBottom: 25,
+    marginBottom: 18,
     paddingHorizontal: 10,
   },
   input: {
@@ -205,7 +208,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     width: "100%",
-    marginVertical: 20,
+    marginVertical: 12,
   },
   line: {
     flex: 1,
@@ -216,18 +219,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     width: "100%",
-    marginBottom: 20,
+    marginBottom: 12,
   },
   iconBtn: {
     borderWidth: 1,
     borderColor: "#d1d5db",
     backgroundColor: "#fff",
     borderRadius: 50,
-    width: 60,
-    height: 60,
+    width: 52,
+    height: 52,
   },
   signupText: {
-    marginTop: 15,
+    marginTop: 8,
     color: "#6b7280",
     fontSize: 14,
     textAlign: "center",
@@ -236,4 +239,4 @@ const styles = StyleSheet.create({
     color: "#1976d2",
     fontWeight: "600",
   },
-});
+}); 
