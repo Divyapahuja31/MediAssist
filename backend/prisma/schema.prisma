@@ -1,32 +1,45 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
+
 model Profile {
-  id                String   @id @default(uuid())
-  userId            String   @unique
+  id                String    @id @default(uuid())
+  userId            String    @unique
   name              String?
   phone             String?
-  dob               DateTime?
+  dob               DateTime? @db.Date
   bloodGroup        String?
   allergies         Json?
   emergencyContacts Json?
-  createdAt         DateTime @default(now())
+  createdAt         DateTime  @default(now())
 
-  medications       Medication[]
-  prescriptions     Prescription[]
-  devices           Device[]
+  devices       Device[]
+  medications   Medication[]
+  schedules     MedicationSchedule[]
+  prescriptions Prescription[]
+
+  @@map("profiles")
+  @@index([userId])
+}
+
+model Device {
+  id            String   @id @default(uuid())
+  userId        String
+  expoPushToken String?  @unique @map("expo_push_token")
+  platform      String?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt      @map("updated_at")
+
+  profile Profile @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@map("devices")
+  @@index([userId])
 }
 
 model Medication {
@@ -35,45 +48,57 @@ model Medication {
   name        String
   formulation String?
   notes       String?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt      @map("updated_at")
 
-  schedules   MedicationSchedule[]
-  profile     Profile   @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  profile       Profile @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  schedules     MedicationSchedule[]
+  prescriptions Prescription[]
+
+  @@map("medications")
+  @@index([userId])
+  @@index([name])
 }
 
 model MedicationSchedule {
-  id            String   @id @default(uuid())
-  medicationId  String
-  userId        String
-  startDate     DateTime?
-  endDate       DateTime?
-  timeOfDay     String?
-  frequency     String?
-  dosage        String?
-  active        Boolean  @default(true)
-  lastSent      DateTime?
+  id           String    @id @default(uuid()) @map("id")
+  medicationId String    @map("medication_id")
+  userId       String?   @map("user_id")
+  startDate    DateTime? @db.Date @map("start_date")
+  endDate      DateTime? @db.Date @map("end_date")
+  timeOfDay    String?   @map("time_of_day")    
+  timezone     String?   @map("timezone")     
+  frequency    String?   @map("frequency")     
+  dosage       String?   @map("dosage")
+  active       Boolean   @default(true) @map("active")
+  lastSent     DateTime? @map("last_sent")
+  nextRunAt    DateTime? @map("next_run_at")   
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt      @map("updated_at")
 
-  medication    Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+  medication Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+  profile     Profile?  @relation(fields: [userId], references: [userId])
+
+  @@map("medication_schedules")
+  @@index([medicationId])
+  @@index([userId])
+  @@index([active])
+  @@index([nextRunAt])
 }
 
 model Prescription {
-  id          String   @id @default(uuid())
-  userId      String
-  storagePath String
-  filename    String
-  uploadedAt  DateTime @default(now())
-  meta        Json?
+  id           String   @id @default(uuid())
+  userId       String
+  storagePath  String   @map("storage_path")
+  filename     String?  @map("filename")
+  uploadedAt   DateTime @default(now()) @map("uploaded_at")
+  meta         Json?    @map("meta")
 
-  profile     Profile  @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  medicationId String?      @map("medication_id")
+  medication   Medication?  @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+
+  profile Profile @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@map("prescriptions")
+  @@index([userId])
 }
-
-model Device {
-  id            String   @id @default(uuid())
-  userId        String
-  expoPushToken String   @unique
-  platform      String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  profile       Profile  @relation(fields: [userId], references: [userId], onDelete: Cascade)
-} 
