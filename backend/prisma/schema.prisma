@@ -1,16 +1,31 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
+model User {
+  id            String               @id @default(uuid())
+  email         String               @unique
+  passwordHash  String
+  role          String               @default("PATIENT") // PATIENT | CAREGIVER | ADMIN
+  createdAt     DateTime             @default(now())
+
+  // relations
+  profile            Profile?
+  devices            Device[]
+  medications        Medication[]
+  medicationSchedules MedicationSchedule[]
+  prescriptions      Prescription[]
+  adherenceLogs      AdherenceLog[]
+}
 
 model Profile {
-  id                String    @id @default(uuid())
-  userId            String    @unique
+  id                String   @id @default(uuid())
+  userId            String   @unique
   name              String?
   phone             String?
   dob               DateTime? @db.Date
@@ -19,69 +34,70 @@ model Profile {
   emergencyContacts Json?
   createdAt         DateTime  @default(now())
 
-  devices       Device[]
-  medications   Medication[]
-  schedules     MedicationSchedule[]
-  prescriptions Prescription[]
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("profiles")
-  @@index([userId])
 }
 
 model Device {
   id            String   @id @default(uuid())
   userId        String
-  expoPushToken String?  @unique @map("expo_push_token")
+  expoPushToken String   @unique
   platform      String?
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt      @map("updated_at")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  profile Profile @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("devices")
   @@index([userId])
 }
 
 model Medication {
-  id          String   @id @default(uuid())
-  userId      String
-  name        String
-  formulation String?
-  notes       String?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt      @map("updated_at")
+  id           String               @id @default(uuid())
+  userId       String
+  name         String
+  formulation  String?
+  notes        String?
+  stock        Int?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
 
-  profile       Profile @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  schedules     MedicationSchedule[]
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  schedules    MedicationSchedule[]
   prescriptions Prescription[]
+  adherenceLogs AdherenceLog[]
 
   @@map("medications")
   @@index([userId])
-  @@index([name])
 }
 
 model MedicationSchedule {
-  id           String    @id @default(uuid()) @map("id")
-  medicationId String    @map("medication_id")
-  userId       String?   @map("user_id")
-  startDate    DateTime? @db.Date @map("start_date")
-  endDate      DateTime? @db.Date @map("end_date")
-  timeOfDay    String?   @map("time_of_day")    
-  timezone     String?   @map("timezone")     
-  frequency    String?   @map("frequency")     
-  dosage       String?   @map("dosage")
-  active       Boolean   @default(true) @map("active")
-  lastSent     DateTime? @map("last_sent")
-  nextRunAt    DateTime? @map("next_run_at")   
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt      @map("updated_at")
+  id           String    @id @default(uuid())
+  userId       String
+  medicationId String
 
+  startDate  DateTime? @db.Date
+  endDate    DateTime? @db.Date
+  timeOfDay  String?        // "08:00"
+  timezone   String?        // "Asia/Kolkata"
+  frequency  String?        // DAILY | WEEKLY | ONCE (or freeform)
+  dosage     String?
+  active     Boolean   @default(true)
+  lastSent   DateTime?
+  nextRunAt  DateTime?      // used by scheduler (UTC)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   medication Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
-  profile     Profile?  @relation(fields: [userId], references: [userId])
+
+  // opposite relation for AdherenceLog
+  adherenceLogs AdherenceLog[]
 
   @@map("medication_schedules")
-  @@index([medicationId])
   @@index([userId])
+  @@index([medicationId])
   @@index([active])
   @@index([nextRunAt])
 }
@@ -89,16 +105,34 @@ model MedicationSchedule {
 model Prescription {
   id           String   @id @default(uuid())
   userId       String
-  storagePath  String   @map("storage_path")
-  filename     String?  @map("filename")
-  uploadedAt   DateTime @default(now()) @map("uploaded_at")
-  meta         Json?    @map("meta")
+  medicationId String?
+  storagePath  String
+  filename     String?
+  uploadedAt   DateTime @default(now())
+  meta         Json?
 
-  medicationId String?      @map("medication_id")
-  medication   Medication?  @relation(fields: [medicationId], references: [id], onDelete: Cascade)
-
-  profile Profile @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  medication Medication? @relation(fields: [medicationId], references: [id], onDelete: Cascade)
 
   @@map("prescriptions")
   @@index([userId])
+  @@index([medicationId])
+}
+
+model AdherenceLog {
+  id           String   @id @default(uuid())
+  userId       String
+  medicationId String?
+  scheduleId   String?
+  eventType    String      // "TAKEN" | "MISSED" | "DELIVERED"
+  timestamp    DateTime @default(now())
+
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  medication  Medication?         @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+  schedule    MedicationSchedule? @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+
+  @@map("adherence_logs")
+  @@index([userId])
+  @@index([medicationId])
+  @@index([scheduleId])
 }
