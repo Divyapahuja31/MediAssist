@@ -4,7 +4,7 @@ import { config } from './config/env.js';
 import { connectDB, disconnectDB } from './config/db.js';
 import { errorHandler } from './middlewares/error.middleware.js';
 import authRoutes from './modules/auth/auth.routes.js';
-// import profileRoutes from './modules/profile/profile.routes.js';
+import profileRoutes from './modules/profile/profile.routes.js';
 
 
 const app = express();
@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
-// app.use('/api/profile', profileRoutes);
+app.use('/api/profile', profileRoutes);
 
 app.use(errorHandler);
 
