@@ -81,7 +81,8 @@ model MedicationSchedule {
   endDate    DateTime? @db.Date
   timeOfDay  String?        // "08:00"
   timezone   String?        // "Asia/Kolkata"
-  frequency  String?        // DAILY | WEEKLY | ONCE (or freeform)
+  frequency  String?        // DAILY | WEEKLY | ONCE
+  daysOfWeek Int[]          // [1, 3, 5] for Mon, Wed, Fri
   dosage     String?
   active     Boolean   @default(true)
   lastSent   DateTime?
@@ -92,7 +93,6 @@ model MedicationSchedule {
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   medication Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
 
-  // opposite relation for AdherenceLog
   adherenceLogs AdherenceLog[]
 
   @@map("medication_schedules")
@@ -106,8 +106,10 @@ model Prescription {
   id           String   @id @default(uuid())
   userId       String
   medicationId String?
-  storagePath  String
+  storageKey   String
   filename     String?
+  mimetype     String?
+  size         Int?
   uploadedAt   DateTime @default(now())
   meta         Json?
 
@@ -125,7 +127,7 @@ model AdherenceLog {
   medicationId String?
   scheduleId   String?
   eventType    String      // "TAKEN" | "MISSED" | "DELIVERED"
-  timestamp    DateTime @default(now())
+  takenAt      DateTime @default(now())
 
   user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   medication  Medication?         @relation(fields: [medicationId], references: [id], onDelete: Cascade)
