@@ -5,6 +5,8 @@ import { connectDB, disconnectDB } from './config/db.js';
 import { errorHandler } from './middlewares/error.middleware.js';
 import authRoutes from './modules/auth/auth.routes.js';
 import profileRoutes from './modules/profile/profile.routes.js';
+import deviceRoutes from './modules/device/device.routes.js';
+import medicationRoutes from './modules/medication/medication.routes.js';
 
 
 const app = express();
@@ -21,6 +23,8 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/devices', deviceRoutes);
+app.use('/api/medications', medicationRoutes);
 
 app.use(errorHandler);
 
