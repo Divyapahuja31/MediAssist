@@ -25,7 +25,7 @@ export const getEmergencyInfo = async (userId) => {
             bloodGroup: true,
             allergies: true,
             emergencyContacts: true,
-            dob: true, // Useful for age in emergency
+            dob: true,
         },
     });
 

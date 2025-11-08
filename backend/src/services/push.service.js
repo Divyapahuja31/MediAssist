@@ -53,7 +53,5 @@ export const sendToUser = async (userId, title, body, data = {}) => {
 };
 
 export const processReceipts = async (receiptIds) => {
-    // Placeholder for receipt processing logic
-    // In a real app, you'd check receipts and remove invalid tokens
     logger.info(`Processing ${receiptIds.length} receipts`);
 };

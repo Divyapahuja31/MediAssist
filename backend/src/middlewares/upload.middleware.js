@@ -2,7 +2,6 @@ import multer from 'multer';
 import path from 'path';
 import { fail } from '../utils/response.helper.js';
 
-// Configure storage (memory storage for now, to process before upload)
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {

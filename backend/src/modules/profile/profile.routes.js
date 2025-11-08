@@ -6,11 +6,9 @@ import { updateProfileSchema } from './profile.validator.js';
 
 const router = express.Router();
 
-// Protected routes
 router.get('/me', protect, profileController.getMe);
 router.post('/me', protect, validate(updateProfileSchema), profileController.updateMe);
 
-// Public route (for QR code scanning)
 router.get('/:userId/emergency', profileController.getEmergencyInfo);
 
 export default router;

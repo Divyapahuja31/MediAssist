@@ -54,7 +54,7 @@ export const update = async (userId, id, data) => {
 
     let nextRunAt = schedule.nextRunAt;
     if (data.timeOfDay || data.frequency || data.startDate || data.daysOfWeek) {
-        // Merge existing data with updates to compute new nextRunAt
+
         const mergedData = { ...schedule, ...data };
         nextRunAt = computeNextRunAt(mergedData);
     }
@@ -69,7 +69,7 @@ export const update = async (userId, id, data) => {
 };
 
 export const remove = async (userId, id) => {
-    await getById(userId, id); // Ensure ownership
+    await getById(userId, id); 
     return await prisma.medicationSchedule.delete({
         where: { id },
     });
@@ -80,7 +80,6 @@ export const markTaken = async (userId, id) => {
     const now = new Date();
 
     return await prisma.$transaction(async (tx) => {
-        // Log adherence
         await tx.adherenceLog.create({
             data: {
                 userId,
@@ -90,11 +89,8 @@ export const markTaken = async (userId, id) => {
                 takenAt: now,
             },
         });
-
-        // Compute next run
         const nextRunAt = computeNextAfter(now, schedule);
 
-        // Update schedule
         return await tx.medicationSchedule.update({
             where: { id },
             data: {

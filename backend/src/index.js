@@ -14,12 +14,10 @@ import adherenceRoutes from './modules/adherence/adherence.routes.js';
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Mount Routes
 app.get('/', (req, res) => {
   res.send('MediAssist API is running');
 });

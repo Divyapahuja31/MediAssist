@@ -9,7 +9,6 @@ const checkReminders = async () => {
     const now = new Date();
 
     try {
-        // Find due schedules
         const dueSchedules = await prisma.medicationSchedule.findMany({
             where: {
                 active: true,
@@ -20,7 +19,7 @@ const checkReminders = async () => {
             include: {
                 medication: true,
             },
-            take: 200, // Batch size
+            take: 200, 
         });
 
         logger.info(`Found ${dueSchedules.length} due schedules`);
@@ -28,7 +27,6 @@ const checkReminders = async () => {
         for (const schedule of dueSchedules) {
             const { medication, userId } = schedule;
 
-            // Send Notification
             await sendToUser(
                 userId,
                 `Time for your ${medication.name}`,
@@ -36,7 +34,6 @@ const checkReminders = async () => {
                 { scheduleId: schedule.id }
             );
 
-            // Log Adherence Event
             await prisma.adherenceLog.create({
                 data: {
                     scheduleId: schedule.id,
@@ -45,10 +42,8 @@ const checkReminders = async () => {
                 },
             });
 
-            // Compute next run time
             const nextRun = computeNextAfter(schedule.nextRunAt || now, schedule);
 
-            // Update Schedule
             await prisma.medicationSchedule.update({
                 where: { id: schedule.id },
                 data: {
@@ -62,7 +57,6 @@ const checkReminders = async () => {
     }
 };
 
-// Run every minute
 export const startScheduler = () => {
     cron.schedule('* * * * *', checkReminders);
     logger.info('Scheduler started');

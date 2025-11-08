@@ -45,6 +45,5 @@ export const deleteByTokenForce = async (expoPushToken) => {
             where: { expoPushToken },
         });
     } catch (error) {
-        // Ignore error if token doesn't exist
     }
 };

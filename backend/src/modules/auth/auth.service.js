@@ -6,7 +6,6 @@ import { config } from '../../config/env.js';
 export const register = async (data) => {
     const { name, email, password, phone } = data;
 
-    // Check if user exists
     const existingUser = await prisma.user.findUnique({
         where: { email },
     });
@@ -17,17 +16,14 @@ export const register = async (data) => {
         throw error;
     }
 
-    // Hash password
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
-
-    // Create User and Profile transactionally
     const user = await prisma.$transaction(async (tx) => {
         const newUser = await tx.user.create({
             data: {
                 email: email.toLowerCase(),
                 passwordHash,
-                role: 'PATIENT', // Default role
+                role: 'PATIENT', 
             },
         });
 
@@ -42,7 +38,6 @@ export const register = async (data) => {
         return newUser;
     });
 
-    // Return user without password
     const { passwordHash: _, ...userWithoutPassword } = user;
     return userWithoutPassword;
 };
