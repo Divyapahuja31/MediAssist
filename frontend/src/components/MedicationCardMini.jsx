@@ -10,7 +10,7 @@ const MedicationCardMini = ({ medication, onPress }) => {
             </View>
             <View style={styles.info}>
                 <Text style={styles.name}>{medication.name}</Text>
-                <Text style={styles.dosage}>{medication.dosage}</Text>
+                <Text style={styles.dosage}>{medication.formulation || medication.dosage || 'No details'}</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#ccc" />
         </TouchableOpacity>

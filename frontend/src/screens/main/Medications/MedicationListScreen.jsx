@@ -1,80 +1,147 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { listMedications } from '../../../api/medications';
 import { Ionicons } from '@expo/vector-icons';
 import MedicationCardMini from '../../../components/MedicationCardMini';
+import MedSearchBar from '../../../components/MedSearchBar';
+import EmptyStateMedications from '../../../components/EmptyStateMedications';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const MedicationListScreen = ({ navigation }) => {
-    const { data, isLoading, error } = useQuery({
-        queryKey: ['medications'],
-        queryFn: () => listMedications(),
+    const [search, setSearch] = useState('');
+
+    const { data, isLoading, error, refetch } = useQuery({
+        queryKey: ['medications', { search }],
+        queryFn: () => listMedications({ search }),
     });
 
-    const medications = Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : []);
+    const medications = data?.data?.data || [];
 
-    if (isLoading) return <ActivityIndicator style={styles.center} size="large" color="#007AFF" />;
-    if (error) return <Text style={styles.center}>Error loading medications</Text>;
+    // Client-side filtering if API doesn't support search yet
+    const filteredMedications = medications.filter(m =>
+        m.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+    const onRefresh = () => {
+        refetch();
+    };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <FlatList
-                data={medications}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                    <MedicationCardMini
-                        medication={item}
-                        onPress={() => navigation.navigate('MedicationDetail', { id: item.id })}
-                    />
-                )}
-                contentContainerStyle={styles.list}
-                ListEmptyComponent={<Text style={styles.emptyText}>No medications found. Add one!</Text>}
+        <View style={styles.container}>
+            <LinearGradient
+                colors={['#00b894', '#00cec9']}
+                style={styles.headerBackground}
             />
-            <TouchableOpacity
-                style={styles.fab}
-                onPress={() => navigation.navigate('MedicationForm')}
-            >
-                <Ionicons name="add" size={30} color="#fff" />
-            </TouchableOpacity>
-        </SafeAreaView>
+            <SafeAreaView style={styles.safeArea} edges={['top']}>
+                <View style={styles.header}>
+                    <Text style={styles.title}>Medications</Text>
+                    <Text style={styles.subtitle}>Manage your medicines</Text>
+                </View>
+
+                <View style={styles.content}>
+                    <MedSearchBar
+                        value={search}
+                        onChangeText={setSearch}
+                        onClear={() => setSearch('')}
+                    />
+
+                    {isLoading ? (
+                        <ActivityIndicator style={styles.center} size="large" color="#00b894" />
+                    ) : (
+                        <FlatList
+                            data={filteredMedications}
+                            keyExtractor={(item) => item.id.toString()}
+                            renderItem={({ item }) => (
+                                <MedicationCardMini
+                                    medication={item}
+                                    onPress={() => navigation.navigate('MedicationDetail', { id: item.id })}
+                                />
+                            )}
+                            contentContainerStyle={styles.list}
+                            ListEmptyComponent={
+                                <EmptyStateMedications
+                                    onAdd={() => navigation.navigate('MedicationForm')}
+                                />
+                            }
+                            refreshControl={
+                                <RefreshControl refreshing={isLoading} onRefresh={onRefresh} tintColor="#00b894" />
+                            }
+                        />
+                    )}
+                </View>
+
+                <TouchableOpacity
+                    style={styles.fab}
+                    onPress={() => navigation.navigate('MedicationForm')}
+                >
+                    <Ionicons name="add" size={32} color="#fff" />
+                </TouchableOpacity>
+            </SafeAreaView>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F5F7FA'
+        backgroundColor: '#F5F7FA',
+    },
+    headerBackground: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 180,
+        borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30,
+    },
+    safeArea: {
+        flex: 1,
+    },
+    header: {
+        paddingHorizontal: 20,
+        paddingTop: 10,
+        paddingBottom: 20,
+    },
+    title: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: '#fff',
+    },
+    subtitle: {
+        fontSize: 16,
+        color: 'rgba(255, 255, 255, 0.9)',
+        marginTop: 5,
+    },
+    content: {
+        flex: 1,
+        paddingHorizontal: 20,
     },
     center: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     list: {
-        padding: 20
-    },
-    emptyText: {
-        textAlign: 'center',
-        marginTop: 50,
-        color: '#666',
-        fontSize: 16
+        paddingBottom: 100,
     },
     fab: {
         position: 'absolute',
         right: 20,
         bottom: 30,
-        backgroundColor: '#007AFF',
-        width: 56,
-        height: 56,
-        borderRadius: 28,
+        backgroundColor: '#00b894',
+        width: 60,
+        height: 60,
+        borderRadius: 30,
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowColor: '#00b894',
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
-        shadowRadius: 3,
+        shadowRadius: 8,
     },
 });
 

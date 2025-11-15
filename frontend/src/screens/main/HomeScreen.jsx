@@ -65,7 +65,7 @@ const HomeScreen = ({ navigation }) => {
     };
 
     const nextDose = nextDoseData?.data?.[0];
-    const medications = Array.isArray(medsData?.data) ? medsData.data : (Array.isArray(medsData) ? medsData : []);
+    const medications = medsData?.data?.data || [];
     const adherenceSummary = adherenceData?.data || { taken: 0, total: 0, percentage: 0 };
 
     const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
