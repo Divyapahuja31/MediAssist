@@ -29,7 +29,10 @@ export const protect = async (req, res, next) => {
             next();
         } catch (error) {
             console.error('Auth error:', error);
-            return fail(res, 401, 'Not authorized, token failed');
+            if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+                return fail(res, 401, 'Not authorized, token failed');
+            }
+            return fail(res, 500, 'Server error during authentication');
         }
     } else {
         return fail(res, 401, 'Not authorized, no token');

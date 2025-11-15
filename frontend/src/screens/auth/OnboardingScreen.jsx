@@ -1,55 +1,41 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { Image } from 'react-native';
 import Onboarding from 'react-native-onboarding-swiper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setItem } from '../../services/storageHelper';
+import { STORAGE_KEYS } from '../../utils/constants';
 
 const OnboardingScreen = ({ navigation }) => {
-    const handleDone = async () => {
-        try {
-            await AsyncStorage.setItem('hasOnboarded', 'true');
-            navigation.replace('Login');
-        } catch (e) {
-            console.log(e);
-        }
+    const onDone = async () => {
+        await setItem(STORAGE_KEYS.HAS_ONBOARDED, 'true');
+        navigation.replace('Login');
     };
 
     return (
         <Onboarding
-            onSkip={handleDone}
-            onDone={handleDone}
+            onSkip={onDone}
+            onDone={onDone}
             pages={[
                 {
                     backgroundColor: '#fff',
-                    image: <View style={styles.placeholderImage}><Text>🖼️</Text></View>,
-                    title: 'Track Your Meds',
-                    subtitle: 'Never miss a dose again with our smart reminders.',
+                    image: <Image source={require('../../../assets/icon.png')} style={{ width: 100, height: 100 }} />,
+                    title: 'Welcome to MediAssist',
+                    subtitle: 'Your personal medication assistant.',
                 },
                 {
-                    backgroundColor: '#fff',
-                    image: <View style={styles.placeholderImage}><Text>📄</Text></View>,
-                    title: 'Manage Prescriptions',
-                    subtitle: 'Keep all your prescriptions in one safe place.',
+                    backgroundColor: '#fe6e58',
+                    image: <Image source={require('../../../assets/icon.png')} style={{ width: 100, height: 100 }} />,
+                    title: 'Track Medications',
+                    subtitle: 'Never miss a dose again.',
                 },
                 {
-                    backgroundColor: '#fff',
-                    image: <View style={styles.placeholderImage}><Text>👩‍⚕️</Text></View>,
+                    backgroundColor: '#999',
+                    image: <Image source={require('../../../assets/icon.png')} style={{ width: 100, height: 100 }} />,
                     title: 'Stay Healthy',
-                    subtitle: 'Monitor your adherence and share with your doctor.',
+                    subtitle: 'Keep track of your health and adherence.',
                 },
             ]}
         />
     );
 };
-
-const styles = StyleSheet.create({
-    placeholderImage: {
-        width: 150,
-        height: 150,
-        backgroundColor: '#f0f0f0',
-        borderRadius: 75,
-        justifyContent: 'center',
-        alignItems: 'center',
-    }
-});
 
 export default OnboardingScreen;

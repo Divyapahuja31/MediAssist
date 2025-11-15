@@ -1,7 +1,8 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import ProfileScreen from '../screens/main/ProfileScreen';
-import EmergencyCardScreen from '../screens/main/EmergencyCardScreen';
+import ProfileScreen from '../screens/main/Profile/ProfileScreen';
+import ProfileEditScreen from '../screens/main/Profile/ProfileEditScreen';
+import EmergencyCardScreen from '../screens/main/Emergency/EmergencyCardScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -12,6 +13,11 @@ const ProfileStack = () => {
                 name="ProfileMain"
                 component={ProfileScreen}
                 options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="ProfileEdit"
+                component={ProfileEditScreen}
+                options={{ title: 'Edit Profile' }}
             />
             <Stack.Screen
                 name="EmergencyCard"

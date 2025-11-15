@@ -1,7 +1,8 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import PrescriptionListScreen from '../screens/main/PrescriptionListScreen';
-import UploadPrescriptionScreen from '../screens/main/UploadPrescriptionScreen';
+import PrescriptionListScreen from '../screens/main/Prescriptions/PrescriptionListScreen';
+import PrescriptionUploadScreen from '../screens/main/Prescriptions/PrescriptionUploadScreen';
+import PrescriptionDetailScreen from '../screens/main/Prescriptions/PrescriptionDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,9 +15,14 @@ const PrescriptionStack = () => {
                 options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="UploadPrescription"
-                component={UploadPrescriptionScreen}
+                name="PrescriptionUpload"
+                component={PrescriptionUploadScreen}
                 options={{ title: 'Upload Prescription' }}
+            />
+            <Stack.Screen
+                name="PrescriptionDetail"
+                component={PrescriptionDetailScreen}
+                options={{ title: 'View Prescription' }}
             />
         </Stack.Navigator>
     );

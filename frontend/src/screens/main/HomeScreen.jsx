@@ -1,132 +1,154 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import {
-    View,
-    Text,
-    StyleSheet,
-    ScrollView,
-    RefreshControl,
-    ActivityIndicator
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, Alert, StatusBar, Platform, TouchableOpacity } from 'react-native';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../context/AuthContext';
-import { useFocusEffect } from '@react-navigation/native';
-import { getUpcomingSchedule } from '../../api/schedules';
-import { getMedications } from '../../api/medications';
-import { getAdherenceSummary, markDoseTaken } from '../../api/adherence';
-
+import { listSchedules, markScheduleTaken } from '../../api/schedules';
+import { listMedications } from '../../api/medications';
+import { getAdherenceSummary } from '../../api/adherence';
 import NextDoseCard from '../../components/NextDoseCard';
 import QuickActions from '../../components/QuickActions';
 import MedicationCardMini from '../../components/MedicationCardMini';
 import AdherenceMiniChart from '../../components/AdherenceMiniChart';
+import { LinearGradient } from 'expo-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 
 const HomeScreen = ({ navigation }) => {
     const { user } = useAuth();
-    const [loading, setLoading] = useState(true);
-    const [refreshing, setRefreshing] = useState(false);
+    const queryClient = useQueryClient();
 
-    const [nextDose, setNextDose] = useState(null);
-    const [medications, setMedications] = useState([]);
-    const [adherence, setAdherence] = useState(null);
+    // Fetch Next Dose
+    const { data: nextDoseData, isLoading: loadingNextDose } = useQuery({
+        queryKey: ['schedules', 'upcoming'],
+        queryFn: () => listSchedules({ upcoming: true, limit: 1 }),
+        staleTime: 30000,
+    });
 
-    const fetchData = async () => {
-        try {
-            const [scheduleRes, medsRes, adherenceRes] = await Promise.all([
-                getUpcomingSchedule(1),
-                getMedications({ limit: 3 }),
-                getAdherenceSummary(7)
-            ]);
+    // Fetch Medications
+    const { data: medsData, isLoading: loadingMeds } = useQuery({
+        queryKey: ['medications', { limit: 4 }],
+        queryFn: () => listMedications({ limit: 4 }),
+    });
 
+    // Fetch Adherence Summary
+    const { data: adherenceData, isLoading: loadingAdherence } = useQuery({
+        queryKey: ['adherenceSummary', { days: 7 }],
+        queryFn: () => getAdherenceSummary({ days: 7 }),
+    });
 
-            setNextDose(Array.isArray(scheduleRes.data) ? scheduleRes.data[0] : scheduleRes.data);
-            setMedications(medsRes.data || []);
-            setAdherence(adherenceRes.data);
-        } catch (error) {
-            console.error("Error fetching home data:", error);
-        } finally {
-            setLoading(false);
-            setRefreshing(false);
-        }
+    // Mark Taken Mutation
+    const markTakenMutation = useMutation({
+        mutationFn: ({ id }) => markScheduleTaken(id, { eventType: 'TAKEN', timestamp: new Date().toISOString() }),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['schedules']);
+            queryClient.invalidateQueries(['adherenceSummary']);
+            Alert.alert('Success', 'Medication marked as taken!');
+        },
+        onError: (error) => {
+            Alert.alert('Error', 'Failed to mark as taken');
+            console.error(error);
+        },
+    });
+
+    const handleMarkTaken = (id) => {
+        markTakenMutation.mutate({ id });
     };
 
-    useFocusEffect(
-        useCallback(() => {
-            fetchData();
-        }, [])
-    );
+    const handleSnooze = (id) => {
+        Alert.alert('Snooze', 'Snooze functionality coming soon!');
+    };
 
     const onRefresh = () => {
-        setRefreshing(true);
-        fetchData();
+        queryClient.invalidateQueries(['schedules']);
+        queryClient.invalidateQueries(['medications']);
+        queryClient.invalidateQueries(['adherenceSummary']);
     };
 
-    const handleMarkTaken = async (scheduleId) => {
-        try {
-            await markDoseTaken(scheduleId);
-            fetchData();
-        } catch (error) {
-            console.error("Error marking dose taken:", error);
-        }
-    };
+    const nextDose = nextDoseData?.data?.[0];
+    const medications = Array.isArray(medsData?.data) ? medsData.data : (Array.isArray(medsData) ? medsData : []);
+    const adherenceSummary = adherenceData?.data || { taken: 0, total: 0, percentage: 0 };
 
-    if (loading && !refreshing) {
-        return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#007AFF" />
-            </View>
-        );
-    }
+    const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
     return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView
-                contentContainerStyle={styles.scrollContent}
-                refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                }
-            >
-                {/* 1. Greeting */}
+        <View style={styles.container}>
+            <StatusBar barStyle="light-content" />
+            <LinearGradient
+                colors={['#00b894', '#00cec9']}
+                style={styles.headerBackground}
+            />
+
+            <SafeAreaView style={styles.safeArea} edges={['top']}>
                 <View style={styles.header}>
-                    <Text style={styles.greeting}>Hello, {user?.name || 'User'} 👋</Text>
-                    <Text style={styles.subGreeting}>Here's your daily summary</Text>
-                </View>
-
-                {/* 2. Next Upcoming Dose */}
-                <NextDoseCard schedule={nextDose} onMarkTaken={handleMarkTaken} />
-
-                {/* 3. Quick Actions */}
-                <QuickActions navigation={navigation} />
-
-                {/* 5. Adherence Summary */}
-                <AdherenceMiniChart summary={adherence} />
-
-                {/* 4. Mini Med List */}
-                <View style={styles.section}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionTitle}>Your Medications</Text>
-                        <Text
-                            style={styles.seeAll}
-                            onPress={() => navigation.navigate('Medications')}
-                        >
-                            See All
-                        </Text>
+                    <View>
+                        <Text style={styles.greeting}>Hello, {user?.profile?.name?.split(' ')[0] || user?.name?.split(' ')[0] || 'User'} 👋</Text>
+                        <Text style={styles.date}>{today}</Text>
                     </View>
-                    {Array.isArray(medications) && medications.map(med => (
-                        <MedicationCardMini
-                            key={med.id}
-                            medication={med}
-                            onPress={() => navigation.navigate('Medications', {
-                                screen: 'MedicationDetail',
-                                params: { id: med.id }
-                            })}
-                        />
-                    ))}
-                    {medications.length === 0 && (
-                        <Text style={styles.emptyText}>No medications added yet.</Text>
-                    )}
+                    <TouchableOpacity style={styles.profileBtn} onPress={() => navigation.navigate('Profile')}>
+                        <Ionicons name="person-circle-outline" size={40} color="#fff" />
+                    </TouchableOpacity>
                 </View>
 
-            </ScrollView>
-        </SafeAreaView>
+                <ScrollView
+                    style={styles.content}
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator={false}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={loadingNextDose || loadingMeds || loadingAdherence}
+                            onRefresh={onRefresh}
+                            tintColor="#fff"
+                        />
+                    }
+                >
+                    {/* Section B: Next Dose */}
+                    <NextDoseCard
+                        schedule={nextDose}
+                        onMarkTaken={handleMarkTaken}
+                        onSnooze={handleSnooze}
+                    />
+
+                    {/* Section C: Quick Actions */}
+                    <QuickActions navigation={navigation} />
+
+                    {/* Section E: Adherence Summary */}
+                    <AdherenceMiniChart summary={adherenceSummary} />
+
+                    {/* Section D: Mini Medication List */}
+                    <View style={styles.section}>
+                        <View style={styles.sectionHeader}>
+                            <Text style={styles.sectionTitle}>Your Medications</Text>
+                            <TouchableOpacity onPress={() => navigation.navigate('Medications')}>
+                                <Text style={styles.seeAll}>See All</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        {medications.length === 0 ? (
+                            <View style={styles.emptyState}>
+                                <Ionicons name="medkit-outline" size={48} color="#ccc" />
+                                <Text style={styles.emptyStateText}>No medications added yet</Text>
+                                <TouchableOpacity
+                                    style={styles.addMedBtn}
+                                    onPress={() => navigation.navigate('Medications', { screen: 'MedicationForm' })}
+                                >
+                                    <Text style={styles.addMedBtnText}>Add Your First Medication</Text>
+                                </TouchableOpacity>
+                            </View>
+                        ) : (
+                            medications.map((med) => (
+                                <MedicationCardMini
+                                    key={med.id}
+                                    medication={med}
+                                    onPress={() => navigation.navigate('Medications', { screen: 'MedicationDetail', params: { id: med.id } })}
+                                />
+                            ))
+                        )}
+                    </View>
+
+                    <View style={styles.footerSpacer} />
+                </ScrollView>
+            </SafeAreaView>
+        </View>
     );
 };
 
@@ -135,29 +157,49 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F5F7FA',
     },
-    loadingContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+    headerBackground: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 250,
+        borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30,
     },
-    scrollContent: {
-        padding: 20,
+    safeArea: {
+        flex: 1,
     },
     header: {
-        marginBottom: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        paddingTop: 10,
+        paddingBottom: 20,
     },
     greeting: {
         fontSize: 28,
         fontWeight: 'bold',
-        color: '#333',
+        color: '#fff',
     },
-    subGreeting: {
-        fontSize: 16,
-        color: '#666',
-        marginTop: 5,
+    date: {
+        fontSize: 14,
+        color: 'rgba(255, 255, 255, 0.9)',
+        marginTop: 4,
+    },
+    profileBtn: {
+        padding: 4,
+    },
+    content: {
+        flex: 1,
+    },
+    scrollContent: {
+        paddingHorizontal: 20,
+        paddingBottom: 20,
     },
     section: {
-        marginTop: 25,
+        marginTop: 10,
+        marginBottom: 20,
     },
     sectionHeader: {
         flexDirection: 'row',
@@ -168,17 +210,42 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#333',
+        color: '#2d3436',
     },
     seeAll: {
         fontSize: 14,
-        color: '#007AFF',
+        color: '#0984e3',
         fontWeight: '600',
     },
-    emptyText: {
-        color: '#999',
-        fontStyle: 'italic',
-    }
+    emptyState: {
+        backgroundColor: '#fff',
+        borderRadius: 16,
+        padding: 30,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: '#eee',
+        borderStyle: 'dashed',
+    },
+    emptyStateText: {
+        fontSize: 16,
+        color: '#636e72',
+        marginTop: 10,
+        marginBottom: 20,
+    },
+    addMedBtn: {
+        backgroundColor: '#00b894',
+        paddingHorizontal: 20,
+        paddingVertical: 12,
+        borderRadius: 10,
+    },
+    addMedBtnText: {
+        color: '#fff',
+        fontWeight: '600',
+    },
+    footerSpacer: {
+        height: 50,
+    },
 });
 
 export default HomeScreen;

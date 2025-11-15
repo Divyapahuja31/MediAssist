@@ -1,26 +1,25 @@
 import api from './api';
 
-export const getUpcomingSchedule = async (limit = 1) => {
-    const response = await api.get(`/api/schedules?upcoming=true&limit=${limit}`);
-    return response.data;
+export const listSchedules = (params) => {
+    return api.get('/schedules', { params });
 };
 
-export const getSchedules = async (params) => {
-    const response = await api.get('/api/schedules', { params });
-    return response.data;
+export const getSchedule = (id) => {
+    return api.get(`/schedules/${id}`);
 };
 
-export const createSchedule = async (scheduleData) => {
-    const response = await api.post('/api/schedules', scheduleData);
-    return response.data;
+export const createSchedule = (data) => {
+    return api.post('/schedules', data);
 };
 
-export const updateSchedule = async (id, scheduleData) => {
-    const response = await api.patch(`/api/schedules/${id}`, scheduleData);
-    return response.data;
+export const updateSchedule = (id, data) => {
+    return api.patch(`/schedules/${id}`, data);
 };
 
-export const deleteSchedule = async (id) => {
-    const response = await api.delete(`/api/schedules/${id}`);
-    return response.data;
-}; 
+export const deleteSchedule = (id) => {
+    return api.delete(`/schedules/${id}`);
+};
+
+export const markScheduleTaken = (id, data) => {
+    return api.post(`/schedules/${id}/mark-taken`, data);
+};

@@ -1,16 +1,13 @@
 import api from './api';
 
-export const getAdherenceSummary = async (days = 7) => {
-    const response = await api.get(`/api/adherence?summary=true&days=${days}`);
-    return response.data;
+export const listAdherenceLogs = (params) => {
+    return api.get('/adherence', { params });
 };
 
-export const markDoseTaken = async (scheduleId) => {
-    const response = await api.post('/api/adherence/mark', { scheduleId });
-    return response.data;
+export const createAdherenceLog = (data) => {
+    return api.post('/adherence', data);
 };
 
-export const getAdherenceHistory = async (from, to) => {
-    const response = await api.get(`/api/adherence?from=${from}&to=${to}`);
-    return response.data;
+export const getAdherenceSummary = (params) => {
+    return api.get('/adherence/summary', { params });
 };

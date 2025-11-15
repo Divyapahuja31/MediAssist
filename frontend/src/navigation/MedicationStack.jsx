@@ -1,9 +1,11 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import MedicationListScreen from '../screens/main/MedicationListScreen';
-import MedicationDetailScreen from '../screens/main/MedicationDetailScreen';
-import AddMedicationScreen from '../screens/main/AddMedicationScreen';
-import ScheduleFormScreen from '../screens/main/ScheduleFormScreen';
+import MedicationListScreen from '../screens/main/Medications/MedicationListScreen';
+import MedicationDetailScreen from '../screens/main/Medications/MedicationDetailScreen';
+import MedicationFormScreen from '../screens/main/Medications/MedicationFormScreen';
+import ScheduleFormScreen from '../screens/main/Schedules/ScheduleFormScreen';
+import ScheduleListScreen from '../screens/main/Schedules/ScheduleListScreen';
+import ScheduleDetailScreen from '../screens/main/Schedules/ScheduleDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,14 +23,24 @@ const MedicationStack = () => {
                 options={{ title: 'Medication Details' }}
             />
             <Stack.Screen
-                name="AddMedication"
-                component={AddMedicationScreen}
-                options={{ title: 'Add Medication' }}
+                name="MedicationForm"
+                component={MedicationFormScreen}
+                options={{ title: 'Medication' }}
+            />
+            <Stack.Screen
+                name="Schedules"
+                component={ScheduleListScreen}
+                options={{ title: 'All Schedules' }}
             />
             <Stack.Screen
                 name="ScheduleForm"
                 component={ScheduleFormScreen}
                 options={{ title: 'Manage Schedule' }}
+            />
+            <Stack.Screen
+                name="ScheduleDetail"
+                component={ScheduleDetailScreen}
+                options={{ title: 'Schedule Details' }}
             />
         </Stack.Navigator>
     );

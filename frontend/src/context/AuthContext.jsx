@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
                     setTokenState(storedToken);
                     try {
                         const res = await getCurrentUser();
-                        setUser(res.data);
+                        setUser(res.data.data);
                     } catch (e) {
                         console.error('Failed to fetch user on boot', e);
                     }
@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         try {
             const res = await loginUser(email, password);
-            const { token: newToken, user: newUser } = res.data;
+            const { token: newToken, user: newUser } = res.data.data || res.data;
 
             await setItem(STORAGE_KEYS.TOKEN, newToken);
             if (newUser) {
@@ -59,7 +59,8 @@ export const AuthProvider = ({ children }) => {
     const register = async (data) => {
         try {
             const res = await registerUser(data);
-            const { token: newToken, user: newUser } = res.data;
+
+            const { token: newToken, user: newUser } = res.data.data || res.data;
 
             if (newToken) {
                 await setItem(STORAGE_KEYS.TOKEN, newToken);

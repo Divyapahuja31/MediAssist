@@ -1,25 +1,25 @@
-import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { AuthContext } from '../../context/AuthContext';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { useAuth } from '../../context/AuthContext';
+import { registerDevice } from '../../api/devices';
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const { login } = useContext(AuthContext);
-    const navigation = useNavigation();
+    const { login } = useAuth();
 
     const handleLogin = async () => {
         if (!email || !password) {
-            Alert.alert('Error', 'Please enter email and password');
+            Alert.alert('Error', 'Please fill in all fields');
             return;
         }
+
         setLoading(true);
         try {
             await login(email, password);
         } catch (error) {
-            Alert.alert('Login Failed', 'Invalid credentials or network error');
+            Alert.alert('Login Failed', error.response?.data?.message || 'Invalid credentials');
         } finally {
             setLoading(false);
         }
@@ -27,13 +27,10 @@ const LoginScreen = () => {
 
     return (
         <View style={styles.container}>
-            <Image source={require('../../assets/logo.png')} style={styles.logo} />
-            <Text style={styles.title}>Welcome back!</Text>
-            <Text style={styles.subtitle}>Your Personal Health & Medicine Management</Text>
-
+            <Text style={styles.title}>Welcome Back</Text>
             <TextInput
                 style={styles.input}
-                placeholder="Email Address"
+                placeholder="Email"
                 value={email}
                 onChangeText={setEmail}
                 autoCapitalize="none"
@@ -46,82 +43,23 @@ const LoginScreen = () => {
                 onChangeText={setPassword}
                 secureTextEntry
             />
-
-            <TouchableOpacity onPress={() => { /* Forgot Password */ }}>
-                <Text style={styles.forgotText}>Forgot Password?</Text>
-            </TouchableOpacity>
-
             <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
                 {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Login</Text>}
             </TouchableOpacity>
-
-            <View style={styles.footer}>
-                <Text>Don't have an account? </Text>
-                <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                    <Text style={styles.link}>Sign Up</Text>
-                </TouchableOpacity>
-            </View>
+            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                <Text style={styles.link}>Don't have an account? Register</Text>
+            </TouchableOpacity>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { 
-        flex: 1,
-        padding: 20, 
-        justifyContent: 'center', 
-        backgroundColor: '#fff' 
-    },
-    logo: { 
-        width: 80,
-        height: 80, 
-        alignSelf: 'center', 
-        marginBottom: 20, 
-        resizeMode: 'contain' 
-    },
-    title: { 
-        fontSize: 24, 
-        fontWeight: 'bold', 
-        textAlign: 'center', 
-        marginBottom: 10 
-    },
-    subtitle: { 
-        fontSize: 14, 
-        color: '#666', 
-        textAlign: 'center', 
-        marginBottom: 30 
-    },
-    input: { 
-        borderWidth: 1, 
-        borderColor: '#ddd', 
-        padding: 15, 
-        borderRadius: 10, 
-        marginBottom: 15 
-    },
-    forgotText: { 
-        textAlign: 'right', 
-        color: '#666', 
-        marginBottom: 20 
-    },
-    button: { 
-        backgroundColor: '#4CD964', 
-        padding: 15,
-        borderRadius: 10, 
-        alignItems: 'center' 
-    },
-    buttonText: { 
-        color: '#fff', 
-        fontWeight: 'bold', 
-        fontSize: 16 
-    },
-    footer: { 
-        flexDirection: 'row', 
-        justifyContent: 'center', 
-        marginTop: 20 
-    },
-    link: { 
-        color: '#007AFF', 
-        fontWeight: 'bold' },
+    container: { flex: 1, justifyContent: 'center', padding: 20, backgroundColor: '#fff' },
+    title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
+    input: { borderWidth: 1, borderColor: '#ccc', padding: 15, borderRadius: 8, marginBottom: 15 },
+    button: { backgroundColor: '#007AFF', padding: 15, borderRadius: 8, alignItems: 'center' },
+    buttonText: { color: '#fff', fontWeight: 'bold' },
+    link: { marginTop: 15, textAlign: 'center', color: '#007AFF' },
 });
 
 export default LoginScreen;

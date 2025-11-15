@@ -23,11 +23,11 @@ export const register = async (data) => {
             data: {
                 email: email.toLowerCase(),
                 passwordHash,
-                role: 'PATIENT', 
+                role: 'PATIENT',
             },
         });
 
-        await tx.profile.create({
+        const newProfile = await tx.profile.create({
             data: {
                 userId: newUser.id,
                 name,
@@ -35,11 +35,23 @@ export const register = async (data) => {
             },
         });
 
+        newUser.profile = newProfile;
+
         return newUser;
     });
 
+    const token = jwt.sign(
+        { id: user.id, role: user.role },
+        config.jwtSecret,
+        { expiresIn: config.jwtExpiresIn }
+    );
+
     const { passwordHash: _, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+
+    return {
+        token,
+        user: userWithoutPassword
+    };
 };
 
 export const login = async (email, password) => {

@@ -3,9 +3,11 @@ import { ok, created, fail } from '../../utils/response.helper.js';
 
 export const register = async (req, res, next) => {
     try {
+        console.log('Register request received:', req.body);
         const user = await authService.register(req.body);
         return created(res, user, 'User registered successfully');
     } catch (error) {
+        console.error('Register Error:', error);
         next(error);
     }
 };

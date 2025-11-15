@@ -1,7 +1,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screens/main/HomeScreen';
-import AdherenceHistoryScreen from '../screens/main/AdherenceHistoryScreen';
+import AdherenceHistoryScreen from '../screens/main/Adherence/AdherenceHistoryScreen';
 
 const Stack = createNativeStackNavigator();
 

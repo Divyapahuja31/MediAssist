@@ -1,26 +1,21 @@
 import api from './api';
 
-export const getMedications = async (params) => {
-    const response = await api.get('/api/medications', { params });
-    return response.data;
+export const listMedications = (params) => {
+    return api.get('/medications', { params });
 };
 
-export const getMedicationById = async (id) => {
-    const response = await api.get(`/api/medications/${id}`);
-    return response.data;
+export const getMedication = (id) => {
+    return api.get(`/medications/${id}`);
 };
 
-export const createMedication = async (medicationData) => {
-    const response = await api.post('/api/medications', medicationData);
-    return response.data;
+export const createMedication = (data) => {
+    return api.post('/medications', data);
 };
 
-export const updateMedication = async (id, medicationData) => {
-    const response = await api.patch(`/api/medications/${id}`, medicationData);
-    return response.data;
+export const updateMedication = (id, data) => {
+    return api.patch(`/medications/${id}`, data);
 };
 
-export const deleteMedication = async (id) => {
-    const response = await api.delete(`/api/medications/${id}`);
-    return response.data;
+export const deleteMedication = (id) => {
+    return api.delete(`/medications/${id}`);
 };

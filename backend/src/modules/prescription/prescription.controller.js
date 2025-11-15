@@ -18,6 +18,7 @@ export const list = async (req, res, next) => {
         const prescriptions = await prescriptionService.listByUser(req.user.id);
         return ok(res, prescriptions, 'Prescriptions fetched successfully');
     } catch (error) {
+        console.error('Error listing prescriptions:', error);
         next(error);
     }
 };
