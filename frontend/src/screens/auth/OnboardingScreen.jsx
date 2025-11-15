@@ -1,16 +1,16 @@
 import React from 'react';
-import { Image, View, Text } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import Onboarding from 'react-native-onboarding-swiper';
-import { useNavigation } from '@react-navigation/native';
-import { setItem } from '../../services/storageHelper';
-import { STORAGE_KEYS } from '../../utils/constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const OnboardingScreen = () => {
-    const navigation = useNavigation();
-
+const OnboardingScreen = ({ navigation }) => {
     const handleDone = async () => {
-        await setItem(STORAGE_KEYS.HAS_ONBOARDED, 'true');
-        navigation.replace('Login');
+        try {
+            await AsyncStorage.setItem('hasOnboarded', 'true');
+            navigation.replace('Login');
+        } catch (e) {
+            console.log(e);
+        }
     };
 
     return (
@@ -20,19 +20,36 @@ const OnboardingScreen = () => {
             pages={[
                 {
                     backgroundColor: '#fff',
-                    image: <Image source={require('../../assets/onboarding1.png')} style={{ width: 300, height: 300, resizeMode: 'contain' }} />,
-                    title: 'Simplify Your Health Journey',
-                    subtitle: 'Manage medicines, store records, and access emergency info—all in one place.',
+                    image: <View style={styles.placeholderImage}><Text>🖼️</Text></View>,
+                    title: 'Track Your Meds',
+                    subtitle: 'Never miss a dose again with our smart reminders.',
                 },
                 {
                     backgroundColor: '#fff',
-                    image: <Image source={require('../../assets/onboarding2.png')} style={{ width: 300, height: 300, resizeMode: 'contain' }} />,
-                    title: 'Never Miss a Dose',
-                    subtitle: 'Get smart medicine reminders and instant access to your emergency health card.',
+                    image: <View style={styles.placeholderImage}><Text>📄</Text></View>,
+                    title: 'Manage Prescriptions',
+                    subtitle: 'Keep all your prescriptions in one safe place.',
+                },
+                {
+                    backgroundColor: '#fff',
+                    image: <View style={styles.placeholderImage}><Text>👩‍⚕️</Text></View>,
+                    title: 'Stay Healthy',
+                    subtitle: 'Monitor your adherence and share with your doctor.',
                 },
             ]}
         />
     );
 };
+
+const styles = StyleSheet.create({
+    placeholderImage: {
+        width: 150,
+        height: 150,
+        backgroundColor: '#f0f0f0',
+        borderRadius: 75,
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
+});
 
 export default OnboardingScreen;

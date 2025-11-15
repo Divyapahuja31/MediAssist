@@ -6,6 +6,8 @@ import { setAuthToken } from '../api/api';
 
 export const AuthContext = createContext();
 
+export const useAuth = () => React.useContext(AuthContext);
+
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setTokenState] = useState(null);
@@ -91,7 +93,8 @@ export const AuthProvider = ({ children }) => {
             user,
             token,
             isAuthenticated,
-            loadingBoot,
+            splashLoading: loadingBoot,
+            isLoading: false,
             login,
             register,
             logout
