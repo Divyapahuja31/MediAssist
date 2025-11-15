@@ -23,4 +23,4 @@ export const updateSchedule = async (id, scheduleData) => {
 export const deleteSchedule = async (id) => {
     const response = await api.delete(`/api/schedules/${id}`);
     return response.data;
-};
+}; 

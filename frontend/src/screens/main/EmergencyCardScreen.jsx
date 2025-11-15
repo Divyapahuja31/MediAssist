@@ -3,9 +3,9 @@ import {
     View,
     Text,
     StyleSheet,
-    ActivityIndicator,
-    SafeAreaView
+    ActivityIndicator
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import QRCode from 'react-native-qrcode-svg';
 import { getEmergencyCard } from '../../api/profile';
 
@@ -19,7 +19,11 @@ const EmergencyCardScreen = () => {
                 const data = await getEmergencyCard();
                 setCardData(data);
             } catch (error) {
-                console.error("Error fetching emergency card:", error);
+                if (error.response && error.response.status === 404) {
+                    setCardData(null);
+                } else {
+                    console.error("Error fetching emergency card:", error);
+                }
             } finally {
                 setLoading(false);
             }
@@ -35,7 +39,18 @@ const EmergencyCardScreen = () => {
         );
     }
 
-    const qrValue = cardData ? JSON.stringify(cardData) : "No emergency data available";
+    if (!cardData) {
+        return (
+            <SafeAreaView style={styles.container}>
+                <View style={styles.card}>
+                    <Text style={styles.title}>No Emergency Card</Text>
+                    <Text style={styles.subtitle}>Please complete your profile to generate an emergency card.</Text>
+                </View>
+            </SafeAreaView>
+        );
+    }
+
+    const qrValue = JSON.stringify(cardData);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -52,13 +67,13 @@ const EmergencyCardScreen = () => {
 
                 <View style={styles.infoContainer}>
                     <Text style={styles.infoLabel}>Name:</Text>
-                    <Text style={styles.infoValue}>{cardData?.name || 'N/A'}</Text>
+                    <Text style={styles.infoValue}>{cardData.name || 'N/A'}</Text>
 
                     <Text style={styles.infoLabel}>Emergency Contact:</Text>
-                    <Text style={styles.infoValue}>{cardData?.emergencyContact || 'N/A'}</Text>
+                    <Text style={styles.infoValue}>{cardData.emergencyContact || 'N/A'}</Text>
 
                     <Text style={styles.infoLabel}>Blood Type:</Text>
-                    <Text style={styles.infoValue}>{cardData?.bloodType || 'N/A'}</Text>
+                    <Text style={styles.infoValue}>{cardData.bloodType || 'N/A'}</Text>
                 </View>
             </View>
         </SafeAreaView>

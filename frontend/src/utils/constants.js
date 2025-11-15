@@ -14,11 +14,11 @@ export const STORAGE_KEYS = {
 
 import { Platform } from 'react-native';
 
-const PORT = 5000;
-const DEV_MACHINE_IP = '192.168.1.5'; // <--- CHANGE THIS TO YOUR LOCAL IP
+const PORT = 5001;
+const DEV_MACHINE_IP = '11.6.1.209'; 
 
 export const API_BASE_URL = Platform.select({
-    ios: `http://localhost:${PORT}/api`,
-    android: `http://10.0.2.2:${PORT}/api`, // Default for emulator
-    // android: `http://${DEV_MACHINE_IP}:${PORT}/api`, // Uncomment for physical device
-});
+    ios: `http://localhost:${PORT}`,
+    // android: `http://10.0.2.2:${PORT}`, // Default for emulator
+    android: `http://${DEV_MACHINE_IP}:${PORT}`, // Use local IP for physical device
+}); 

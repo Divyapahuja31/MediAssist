@@ -6,9 +6,9 @@ import {
     TouchableOpacity,
     Image,
     Alert,
-    ActivityIndicator,
-    SafeAreaView
+    ActivityIndicator
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { uploadPrescription } from '../../api/prescriptions';
@@ -19,7 +19,7 @@ const UploadPrescriptionScreen = ({ navigation }) => {
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            mediaTypes: ImagePicker.MediaType.Images,
             allowsEditing: true,
             aspect: [4, 3],
             quality: 1,

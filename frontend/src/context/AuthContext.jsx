@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { setItem, getItem, removeItem } from '../services/storageHelper';
 import { STORAGE_KEYS } from '../utils/constants';
-import { getMe, login as apiLogin, register as apiRegister } from '../api/auth';
+import { getCurrentUser, loginUser, registerUser } from '../api/auth';
 import { setAuthToken } from '../api/api';
 
 export const AuthContext = createContext();
@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
                     setAuthToken(storedToken);
                     setTokenState(storedToken);
                     try {
-                        const res = await getMe();
+                        const res = await getCurrentUser();
                         setUser(res.data);
                     } catch (e) {
                         console.error('Failed to fetch user on boot', e);
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
-            const res = await apiLogin({ email, password });
+            const res = await loginUser(email, password);
             const { token: newToken, user: newUser } = res.data;
 
             await setItem(STORAGE_KEYS.TOKEN, newToken);
@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (data) => {
         try {
-            const res = await apiRegister(data);
+            const res = await registerUser(data);
             const { token: newToken, user: newUser } = res.data;
 
             if (newToken) {

@@ -21,10 +21,9 @@ const RegisterScreen = () => {
         setLoading(true);
         try {
             await register({ name, email, phone, password });
-            // Navigation is handled by AppNavigator based on auth state, 
-            // but we can explicitly navigate if needed or show success
         } catch (error) {
-            Alert.alert('Registration Failed', 'Please try again.');
+            const errorMessage = error.response?.data?.error || 'Registration Failed. Please try again.';
+            Alert.alert('Registration Failed', errorMessage);
         } finally {
             setLoading(false);
         }
@@ -80,58 +79,58 @@ const RegisterScreen = () => {
 };
 
 const styles = StyleSheet.create({
-    container: { 
-        flex: 1, 
-        padding: 20, 
-        justifyContent: 'center', 
-        backgroundColor: '#fff' 
+    container: {
+        flex: 1,
+        padding: 20,
+        justifyContent: 'center',
+        backgroundColor: '#fff'
     },
-    logo: { 
-        width: 80, 
-        height: 80, 
-        alignSelf: 'center', 
-        marginBottom: 20, 
-        resizeMode: 'contain' 
+    logo: {
+        width: 80,
+        height: 80,
+        alignSelf: 'center',
+        marginBottom: 20,
+        resizeMode: 'contain'
     },
-    title: { 
-        fontSize: 24, 
-        fontWeight: 'bold', 
-        textAlign: 'center', 
-        marginBottom: 10 
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 10
     },
-    subtitle: { 
-        fontSize: 14, 
-        color: '#666', 
-        textAlign: 'center', 
-        marginBottom: 30 
+    subtitle: {
+        fontSize: 14,
+        color: '#666',
+        textAlign: 'center',
+        marginBottom: 30
     },
-    input: { 
-        borderWidth: 1, 
-        borderColor: '#ddd', 
-        padding: 15, 
-        borderRadius: 10, 
-        marginBottom: 15 
+    input: {
+        borderWidth: 1,
+        borderColor: '#ddd',
+        padding: 15,
+        borderRadius: 10,
+        marginBottom: 15
     },
-    button: { 
-        backgroundColor: '#4CD964', 
-        padding: 15, 
-        borderRadius: 10, 
-        alignItems: 'center', 
-        marginTop: 10 
+    button: {
+        backgroundColor: '#4CD964',
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        marginTop: 10
     },
-    buttonText: { 
-        color: '#fff', 
-        fontWeight: 'bold', 
-        fontSize: 16 
+    buttonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 16
     },
-    footer: { 
-        flexDirection: 'row', 
-        justifyContent: 'center', 
-        marginTop: 20 
+    footer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginTop: 20
     },
-    link: { 
-        color: '#007AFF', 
-        fontWeight: 'bold' 
+    link: {
+        color: '#007AFF',
+        fontWeight: 'bold'
     },
 });
 

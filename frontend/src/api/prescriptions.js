@@ -12,4 +12,4 @@ export const uploadPrescription = async (formData) => {
         },
     });
     return response.data;
-};
+}; 

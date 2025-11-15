@@ -5,9 +5,9 @@ import {
     StyleSheet,
     FlatList,
     TouchableOpacity,
-    ActivityIndicator,
-    SafeAreaView
+    ActivityIndicator
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { getMedications } from '../../api/medications';

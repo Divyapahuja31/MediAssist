@@ -5,9 +5,9 @@ import {
     StyleSheet,
     ScrollView,
     RefreshControl,
-    SafeAreaView,
     ActivityIndicator
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../context/AuthContext';
 import { useFocusEffect } from '@react-navigation/native';
 import { getUpcomingSchedule } from '../../api/schedules';
@@ -37,9 +37,9 @@ const HomeScreen = ({ navigation }) => {
             ]);
 
 
-            setNextDose(Array.isArray(scheduleRes) ? scheduleRes[0] : scheduleRes);
-            setMedications(medsRes);
-            setAdherence(adherenceRes);
+            setNextDose(Array.isArray(scheduleRes.data) ? scheduleRes.data[0] : scheduleRes.data);
+            setMedications(medsRes.data || []);
+            setAdherence(adherenceRes.data);
         } catch (error) {
             console.error("Error fetching home data:", error);
         } finally {
@@ -110,7 +110,7 @@ const HomeScreen = ({ navigation }) => {
                             See All
                         </Text>
                     </View>
-                    {medications.map(med => (
+                    {Array.isArray(medications) && medications.map(med => (
                         <MedicationCardMini
                             key={med.id}
                             medication={med}
