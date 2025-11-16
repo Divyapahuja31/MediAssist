@@ -139,7 +139,15 @@ const HomeScreen = ({ navigation }) => {
                                 <MedicationCardMini
                                     key={med.id}
                                     medication={med}
-                                    onPress={() => navigation.navigate('Medications', { screen: 'MedicationDetail', params: { id: med.id } })}
+                                    onPress={() => navigation.navigate('Medications', {
+                                        screen: 'MedicationDetail',
+                                        params: {
+                                            id: med.id,
+                                            initialName: med.name,
+                                            initialFormulation: med.formulation,
+                                            initialStock: med.stock
+                                        }
+                                    })}
                                 />
                             ))
                         )}

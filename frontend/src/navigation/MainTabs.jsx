@@ -2,6 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeStack from './HomeStack';
 import MedicationStack from './MedicationStack';
+import ScheduleStack from './ScheduleStack';
 import PrescriptionStack from './PrescriptionStack';
 import ProfileStack from './ProfileStack';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,6 +20,8 @@ const MainTabs = () => {
                         iconName = focused ? 'home' : 'home-outline';
                     } else if (route.name === 'Medications') {
                         iconName = focused ? 'medkit' : 'medkit-outline';
+                    } else if (route.name === 'Schedules') {
+                        iconName = focused ? 'alarm' : 'alarm-outline';
                     } else if (route.name === 'Prescriptions') {
                         iconName = focused ? 'document-text' : 'document-text-outline';
                     } else if (route.name === 'Profile') {
@@ -33,6 +36,7 @@ const MainTabs = () => {
         >
             <Tab.Screen name="Home" component={HomeStack} options={{ headerShown: false }} />
             <Tab.Screen name="Medications" component={MedicationStack} options={{ headerShown: false }} />
+            <Tab.Screen name="Schedules" component={ScheduleStack} options={{ headerShown: false }} />
             <Tab.Screen name="Prescriptions" component={PrescriptionStack} options={{ headerShown: false }} />
             <Tab.Screen name="Profile" component={ProfileStack} options={{ headerShown: false }} />
         </Tab.Navigator>

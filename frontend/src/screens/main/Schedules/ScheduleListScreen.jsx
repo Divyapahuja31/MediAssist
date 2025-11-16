@@ -1,12 +1,17 @@
-import React from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Switch, ActivityIndicator } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, RefreshControl, Alert } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { listSchedules, updateSchedule } from '../../../api/schedules';
+import { listSchedules, updateSchedule, deleteSchedule } from '../../../api/schedules';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import ScheduleCard from '../../../components/ScheduleCard';
 
 const ScheduleListScreen = ({ navigation }) => {
     const queryClient = useQueryClient();
-    const { data, isLoading, error } = useQuery({
+    const [filter, setFilter] = useState('all'); // all, active, paused
+
+    const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['schedules'],
         queryFn: () => listSchedules(),
     });
@@ -16,96 +21,194 @@ const ScheduleListScreen = ({ navigation }) => {
         onSuccess: () => queryClient.invalidateQueries(['schedules']),
     });
 
-    const schedules = data?.data || [];
+    const deleteMutation = useMutation({
+        mutationFn: (id) => deleteSchedule(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['schedules']);
+            Alert.alert('Success', 'Schedule deleted');
+        },
+        onError: () => Alert.alert('Error', 'Failed to delete schedule'),
+    });
 
-    if (isLoading) return <ActivityIndicator style={styles.center} size="large" color="#007AFF" />;
-    if (error) return <Text style={styles.center}>Error loading schedules</Text>;
+    const handleDelete = (id) => {
+        Alert.alert('Delete Schedule', 'Are you sure?', [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Delete', style: 'destructive', onPress: () => deleteMutation.mutate(id) },
+        ]);
+    };
+
+    const schedules = Array.isArray(data?.data) ? data.data : [];
+
+    const filteredSchedules = schedules.filter(s => {
+        if (filter === 'active') return s.active;
+        if (filter === 'paused') return !s.active;
+        return true;
+    });
 
     const renderItem = ({ item }) => (
-        <TouchableOpacity
-            style={styles.card}
-            onPress={() => navigation.navigate('ScheduleDetail', { id: item.id })}
-        >
-            <View style={styles.info}>
-                <Text style={styles.medName}>{item.medication?.name || 'Unknown Med'}</Text>
-                <Text style={styles.details}>{item.timeOfDay} • {item.frequency}</Text>
-                <Text style={styles.dosage}>{item.dosage}</Text>
-            </View>
-            <Switch
-                value={item.active}
-                onValueChange={(val) => toggleMutation.mutate({ id: item.id, active: val })}
-                trackColor={{ false: "#767577", true: "#81b0ff" }}
-                thumbColor={item.active ? "#007AFF" : "#f4f3f4"}
-            />
-        </TouchableOpacity>
+        <ScheduleCard
+            schedule={item}
+            onToggle={(val) => toggleMutation.mutate({ id: item.id, active: val })}
+            onPress={() => navigation.navigate('ScheduleForm', { id: item.id, medicationId: item.medicationId })}
+            onDelete={() => handleDelete(item.id)}
+        />
     );
 
     return (
         <View style={styles.container}>
-            <FlatList
-                data={schedules}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={renderItem}
-                contentContainerStyle={styles.list}
-                ListEmptyComponent={<Text style={styles.emptyText}>No schedules set.</Text>}
+            <LinearGradient
+                colors={['#00b894', '#00cec9']}
+                style={styles.headerBackground}
             />
-            <TouchableOpacity
-                style={styles.fab}
-                onPress={() => navigation.navigate('ScheduleForm')}
-            >
-                <Ionicons name="add" size={30} color="#fff" />
-            </TouchableOpacity>
+            <SafeAreaView style={styles.safeArea} edges={['top']}>
+                <View style={styles.header}>
+                    <Text style={styles.title}>Schedules</Text>
+                    <Text style={styles.subtitle}>Manage your reminders</Text>
+                </View>
+
+                {/* Filter Tabs */}
+                <View style={styles.filterContainer}>
+                    {['all', 'active', 'paused'].map((f) => (
+                        <TouchableOpacity
+                            key={f}
+                            style={[styles.filterTab, filter === f && styles.activeFilterTab]}
+                            onPress={() => setFilter(f)}
+                        >
+                            <Text style={[styles.filterText, filter === f && styles.activeFilterText]}>
+                                {f.charAt(0).toUpperCase() + f.slice(1)}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+
+                <View style={styles.content}>
+                    {isLoading ? (
+                        <ActivityIndicator style={styles.center} size="large" color="#00b894" />
+                    ) : (
+                        <FlatList
+                            data={filteredSchedules}
+                            keyExtractor={(item) => item.id.toString()}
+                            renderItem={renderItem}
+                            contentContainerStyle={styles.list}
+                            showsVerticalScrollIndicator={false}
+                            ListEmptyComponent={
+                                <View style={styles.emptyState}>
+                                    <Ionicons name="alarm-outline" size={48} color="#ccc" />
+                                    <Text style={styles.emptyText}>No schedules found.</Text>
+                                </View>
+                            }
+                            refreshControl={
+                                <RefreshControl refreshing={isLoading} onRefresh={refetch} tintColor="#00b894" />
+                            }
+                        />
+                    )}
+                </View>
+
+                <TouchableOpacity
+                    style={styles.fab}
+                    onPress={() => navigation.navigate('ScheduleForm')}
+                >
+                    <Ionicons name="add" size={32} color="#fff" />
+                </TouchableOpacity>
+            </SafeAreaView>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F5F7FA' },
-    center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    list: { padding: 20 },
-    card: {
-        backgroundColor: '#fff',
-        padding: 15,
-        borderRadius: 12,
-        marginBottom: 10,
+    container: {
+        flex: 1,
+        backgroundColor: '#F5F7FA',
+    },
+    headerBackground: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 180,
+        borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30,
+    },
+    safeArea: {
+        flex: 1,
+    },
+    header: {
+        paddingHorizontal: 20,
+        paddingTop: 10,
+        paddingBottom: 15,
+    },
+    title: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: '#fff',
+    },
+    subtitle: {
+        fontSize: 16,
+        color: 'rgba(255, 255, 255, 0.9)',
+        marginTop: 5,
+    },
+    filterContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        marginBottom: 10,
+    },
+    filterTab: {
+        paddingVertical: 6,
+        paddingHorizontal: 16,
+        borderRadius: 20,
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        marginRight: 10,
+    },
+    activeFilterTab: {
+        backgroundColor: '#fff',
+    },
+    filterText: {
+        color: 'rgba(255, 255, 255, 0.9)',
+        fontWeight: '600',
+        fontSize: 14,
+    },
+    activeFilterText: {
+        color: '#00b894',
+    },
+    content: {
+        flex: 1,
+        paddingHorizontal: 20,
+    },
+    center: {
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
-        elevation: 2,
     },
-    info: { flex: 1 },
-    medName: { 
-        fontSize: 16, 
-        fontWeight: 'bold', 
-        color: '#333' 
+    list: {
+        paddingTop: 10,
+        paddingBottom: 100,
     },
-    details: { 
-        fontSize: 14, 
-        color: '#666', 
-        marginTop: 2 
+    emptyState: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 50,
     },
-    dosage: { 
-        fontSize: 14, 
-        color: '#007AFF', 
-        marginTop: 2 
-    },
-    emptyText: { 
-        textAlign: 'center', 
-        marginTop: 50, 
-        color: '#666', 
-        fontSize: 16 
+    emptyText: {
+        textAlign: 'center',
+        marginTop: 10,
+        color: '#999',
+        fontSize: 16,
     },
     fab: {
         position: 'absolute',
         right: 20,
         bottom: 30,
-        backgroundColor: '#007AFF',
-        width: 56,
-        height: 56,
-        borderRadius: 28,
+        backgroundColor: '#00b894',
+        width: 60,
+        height: 60,
+        borderRadius: 30,
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 5,
+        shadowColor: '#00b894',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
     },
 });
 

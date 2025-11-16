@@ -5,7 +5,7 @@ export const getProfile = (userId = 'me') => {
 };
 
 export const upsertProfile = (data) => {
-    return api.post('/profile/me', data); // Or PATCH depending on backend
+    return api.post('/profile/me', data); 
 };
 
 export const getEmergencyContacts = (userId = 'me') => {

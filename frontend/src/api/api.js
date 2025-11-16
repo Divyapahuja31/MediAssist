@@ -40,7 +40,7 @@ api.interceptors.response.use(
 
 export const getAvatarUrl = (firstName = "", lastName = "") => {
     const name = `${(firstName || "").trim()} ${(lastName || "").trim()}`.trim() || "User";
-    // Use + for spaces as it is more standard for query params in some APIs
+   
     const encoded = encodeURIComponent(name).replace(/%20/g, "+");
     return `https://ui-avatars.com/api/?name=${encoded}&background=00b894&color=fff&size=128&bold=true`;
 };

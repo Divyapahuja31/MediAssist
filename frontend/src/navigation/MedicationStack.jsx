@@ -20,7 +20,7 @@ const MedicationStack = () => {
             <Stack.Screen
                 name="MedicationDetail"
                 component={MedicationDetailScreen}
-                options={{ title: 'Medication Details' }}
+                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name="MedicationForm"

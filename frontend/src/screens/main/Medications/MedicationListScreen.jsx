@@ -19,7 +19,6 @@ const MedicationListScreen = ({ navigation }) => {
 
     const medications = data?.data?.data || [];
 
-    // Client-side filtering if API doesn't support search yet
     const filteredMedications = medications.filter(m =>
         m.name.toLowerCase().includes(search.toLowerCase())
     );
@@ -56,7 +55,12 @@ const MedicationListScreen = ({ navigation }) => {
                             renderItem={({ item }) => (
                                 <MedicationCardMini
                                     medication={item}
-                                    onPress={() => navigation.navigate('MedicationDetail', { id: item.id })}
+                                    onPress={() => navigation.navigate('MedicationDetail', {
+                                        id: item.id,
+                                        initialName: item.name,
+                                        initialFormulation: item.formulation,
+                                        initialStock: item.stock
+                                    })}
                                 />
                             )}
                             contentContainerStyle={styles.list}
