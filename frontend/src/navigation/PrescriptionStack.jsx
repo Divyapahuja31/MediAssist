@@ -1,14 +1,14 @@
 import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import PrescriptionListScreen from '../screens/main/Prescriptions/PrescriptionListScreen';
 import PrescriptionUploadScreen from '../screens/main/Prescriptions/PrescriptionUploadScreen';
 import PrescriptionDetailScreen from '../screens/main/Prescriptions/PrescriptionDetailScreen';
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 
 const PrescriptionStack = () => {
     return (
-        <Stack.Navigator>
+        <Stack.Navigator initialRouteName="PrescriptionList">
             <Stack.Screen
                 name="PrescriptionList"
                 component={PrescriptionListScreen}
@@ -17,12 +17,12 @@ const PrescriptionStack = () => {
             <Stack.Screen
                 name="PrescriptionUpload"
                 component={PrescriptionUploadScreen}
-                options={{ title: 'Upload Prescription' }}
+                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name="PrescriptionDetail"
                 component={PrescriptionDetailScreen}
-                options={{ title: 'View Prescription' }}
+                options={{ headerShown: false }}
             />
         </Stack.Navigator>
     );

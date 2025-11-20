@@ -1,163 +1,330 @@
 import React, { useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity, ActivityIndicator, Image, Platform } from 'react-native';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { uploadPrescription } from '../../../api/prescriptions';
+import { listMedications } from '../../../api/medications';
+import * as ImagePicker from 'expo-image-picker';
+import * as DocumentPicker from 'expo-document-picker';
+import InputField from '../../../components/InputField';
+import ButtonPrimary from '../../../components/ButtonPrimary';
+import UploadPreview from '../../../components/UploadPreview';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const PrescriptionUploadScreen = ({ navigation, route }) => {
-    const medicationId = route.params?.medicationId;
-    const [image, setImage] = useState(null);
+    const initialMedicationId = route.params?.medicationId;
     const queryClient = useQueryClient();
 
-    const pickImage = async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaType.Images,
-            allowsEditing: true,
-            quality: 1,
-        });
+    const [file, setFile] = useState(null);
+    const [medicationId, setMedicationId] = useState(initialMedicationId ? initialMedicationId.toString() : '');
+    const [notes, setNotes] = useState('');
+    const [uploading, setUploading] = useState(false);
 
-        if (!result.canceled) {
-            setImage(result.assets[0]);
-        }
-    };
-
-    const takePhoto = async () => {
-        const result = await ImagePicker.launchCameraAsync({
-            allowsEditing: true,
-            quality: 1,
-        });
-
-        if (!result.canceled) {
-            setImage(result.assets[0]);
-        }
-    };
-
-    const mutation = useMutation({
-        mutationFn: (formData) => uploadPrescription(formData),
-        onSuccess: () => {
-            queryClient.invalidateQueries(['prescriptions']);
-            Alert.alert('Success', 'Prescription uploaded!');
-            navigation.goBack();
-        },
-        onError: (error) => {
-            Alert.alert('Error', 'Failed to upload prescription');
-            console.error(error);
-        },
+    // Fetch Medications
+    const { data: medsData } = useQuery({
+        queryKey: ['medications'],
+        queryFn: () => listMedications(),
     });
 
-    const handleUpload = () => {
-        if (!image) {
-            Alert.alert('Error', 'Please select an image');
+    const medications = medsData?.data?.data || [];
+
+    const pickImage = async (useCamera = false) => {
+        try {
+            let result;
+            if (useCamera) {
+                const permission = await ImagePicker.requestCameraPermissionsAsync();
+                if (permission.status !== 'granted') {
+                    Alert.alert('Permission denied', 'Camera permission is required');
+                    return;
+                }
+                result = await ImagePicker.launchCameraAsync({
+                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    quality: 0.8,
+                });
+            } else {
+                result = await ImagePicker.launchImageLibraryAsync({
+                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    quality: 0.8,
+                });
+            }
+
+            if (!result.canceled) {
+                const asset = result.assets[0];
+                setFile({
+                    uri: asset.uri,
+                    name: asset.fileName || `upload_${Date.now()}.jpg`,
+                    type: 'image/jpeg', // Default fallback
+                    mimeType: asset.mimeType || 'image/jpeg',
+                });
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Failed to pick image');
+        }
+    };
+
+    const pickDocument = async () => {
+        try {
+            const result = await DocumentPicker.getDocumentAsync({
+                type: ['application/pdf', 'image/*'],
+                copyToCacheDirectory: true,
+            });
+
+            if (!result.canceled) {
+                const asset = result.assets[0];
+                setFile({
+                    uri: asset.uri,
+                    name: asset.name,
+                    type: asset.mimeType,
+                    mimeType: asset.mimeType,
+                });
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Failed to pick document');
+        }
+    };
+
+    const handleUpload = async () => {
+        if (!file) {
+            Alert.alert('Error', 'Please select a file first');
             return;
         }
 
-        const formData = new FormData();
-        formData.append('file', {
-            uri: image.uri,
-            name: 'prescription.jpg',
-            type: 'image/jpeg',
-        });
-        if (medicationId) {
-            formData.append('medicationId', medicationId);
-        }
+        setUploading(true);
+        try {
+            const formData = new FormData();
+            formData.append('file', {
+                uri: file.uri,
+                name: file.name,
+                type: file.mimeType || 'application/octet-stream',
+            });
 
-        mutation.mutate(formData);
+            if (medicationId) {
+                formData.append('medicationId', medicationId);
+            }
+
+            if (notes) {
+                formData.append('meta', JSON.stringify({ notes }));
+            }
+
+            await uploadPrescription(formData);
+
+            queryClient.invalidateQueries(['prescriptions']);
+            Alert.alert('Success', 'Prescription uploaded successfully');
+            navigation.goBack();
+        } catch (error) {
+            console.error(error);
+            Alert.alert('Error', 'Failed to upload prescription');
+        } finally {
+            setUploading(false);
+        }
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.previewContainer}>
-                {image ? (
-                    <Image source={{ uri: image.uri }} style={styles.preview} />
-                ) : (
-                    <View style={styles.placeholder}>
-                        <Ionicons name="image-outline" size={60} color="#ccc" />
-                        <Text style={styles.placeholderText}>No image selected</Text>
+        <View style={styles.container}>
+            <LinearGradient
+                colors={['#00b894', '#00cec9']}
+                style={styles.headerBackground}
+            />
+            <SafeAreaView style={styles.safeArea} edges={['top']}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+                        <Ionicons name="arrow-back" size={24} color="#fff" />
+                    </TouchableOpacity>
+                    <Text style={styles.headerTitle}>Upload Prescription</Text>
+                    <View style={{ width: 24 }} />
+                </View>
+
+                <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+                    <View style={styles.card}>
+                        {/* File Picker Section */}
+                        <Text style={styles.label}>Choose Document</Text>
+
+                        {!file ? (
+                            <View style={styles.pickerRow}>
+                                <TouchableOpacity style={styles.pickerBtn} onPress={() => pickImage(true)}>
+                                    <Ionicons name="camera" size={24} color="#fff" />
+                                    <Text style={styles.pickerBtnText}>Camera</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={[styles.pickerBtn, styles.galleryBtn]} onPress={() => pickImage(false)}>
+                                    <Ionicons name="images" size={24} color="#00b894" />
+                                    <Text style={[styles.pickerBtnText, { color: '#00b894' }]}>Gallery</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={[styles.pickerBtn, styles.docBtn]} onPress={pickDocument}>
+                                    <Ionicons name="document" size={24} color="#636e72" />
+                                    <Text style={[styles.pickerBtnText, { color: '#636e72' }]}>File</Text>
+                                </TouchableOpacity>
+                            </View>
+                        ) : (
+                            <UploadPreview file={file} onRemove={() => setFile(null)} />
+                        )}
+
+                        {/* Medication Selector */}
+                        <Text style={styles.label}>Link to Medication (Optional)</Text>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.medSelector}>
+                            <TouchableOpacity
+                                style={[
+                                    styles.medChip,
+                                    medicationId === '' && styles.medChipSelected
+                                ]}
+                                onPress={() => setMedicationId('')}
+                            >
+                                <Text style={[
+                                    styles.medChipText,
+                                    medicationId === '' && styles.medChipTextSelected
+                                ]}>
+                                    None
+                                </Text>
+                            </TouchableOpacity>
+                            {medications.map(med => (
+                                <TouchableOpacity
+                                    key={med.id}
+                                    style={[
+                                        styles.medChip,
+                                        medicationId === med.id.toString() && styles.medChipSelected
+                                    ]}
+                                    onPress={() => setMedicationId(med.id.toString())}
+                                >
+                                    <Text style={[
+                                        styles.medChipText,
+                                        medicationId === med.id.toString() && styles.medChipTextSelected
+                                    ]}>
+                                        {med.name}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+
+                        <InputField
+                            label="Notes"
+                            value={notes}
+                            onChangeText={setNotes}
+                            placeholder="Add any notes..."
+                            multiline
+                            numberOfLines={3}
+                        />
+
+                        <ButtonPrimary
+                            title={uploading ? 'Uploading...' : 'Upload Prescription'}
+                            onPress={handleUpload}
+                            loading={uploading}
+                            disabled={!file}
+                            style={styles.uploadBtn}
+                        />
                     </View>
-                )}
-            </View>
-
-            <View style={styles.actions}>
-                <TouchableOpacity style={styles.btn} onPress={pickImage}>
-                    <Ionicons name="images" size={24} color="#007AFF" />
-                    <Text style={styles.btnText}>Gallery</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.btn} onPress={takePhoto}>
-                    <Ionicons name="camera" size={24} color="#007AFF" />
-                    <Text style={styles.btnText}>Camera</Text>
-                </TouchableOpacity>
-            </View>
-
-            <TouchableOpacity
-                style={[styles.uploadBtn, !image && styles.disabledBtn]}
-                onPress={handleUpload}
-                disabled={!image || mutation.isPending}
-            >
-                {mutation.isPending ? (
-                    <ActivityIndicator color="#fff" />
-                ) : (
-                    <Text style={styles.uploadBtnText}>Upload Prescription</Text>
-                )}
-            </TouchableOpacity>
-        </SafeAreaView>
+                </ScrollView>
+            </SafeAreaView>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
-        backgroundColor: '#fff'
-    },
-    previewContainer: {
-        height: 300,
         backgroundColor: '#F5F7FA',
-        borderRadius: 12,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 20,
-        overflow: 'hidden'
     },
-    preview: {
-        width: '100%',
-        height: '100%'
+    headerBackground: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 150,
+        borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30,
     },
-    placeholder: {
-        alignItems: 'center'
+    safeArea: {
+        flex: 1,
     },
-    placeholderText: {
-        marginTop: 10,
-        color: '#999'
-    },
-    actions: {
+    header: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        marginBottom: 30
-    },
-    btn: {
+        justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 10
+        paddingHorizontal: 20,
+        paddingTop: 10,
+        paddingBottom: 20,
     },
-    btnText: {
+    backBtn: {
+        padding: 5,
+    },
+    headerTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#fff',
+    },
+    content: {
+        paddingHorizontal: 20,
+        paddingTop: 10,
+    },
+    card: {
+        backgroundColor: '#fff',
+        borderRadius: 20,
+        padding: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 8,
+        elevation: 3,
+    },
+    label: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#636e72',
+        marginBottom: 10,
+        marginTop: 10,
+    },
+    pickerRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 20,
+    },
+    pickerBtn: {
+        flex: 1,
+        backgroundColor: '#00b894',
+        paddingVertical: 15,
+        borderRadius: 12,
+        alignItems: 'center',
+        marginHorizontal: 5,
+    },
+    galleryBtn: {
+        backgroundColor: '#dfe6e9',
+    },
+    docBtn: {
+        backgroundColor: '#f1f2f6',
+    },
+    pickerBtnText: {
+        color: '#fff',
+        fontWeight: '600',
         marginTop: 5,
-        color: '#007AFF',
-        fontWeight: '600'
+        fontSize: 12,
+    },
+    medSelector: {
+        flexDirection: 'row',
+        marginBottom: 20,
+    },
+    medChip: {
+        paddingHorizontal: 15,
+        paddingVertical: 8,
+        borderRadius: 20,
+        backgroundColor: '#f1f2f6',
+        marginRight: 10,
+        borderWidth: 1,
+        borderColor: 'transparent',
+    },
+    medChipSelected: {
+        backgroundColor: '#e3f9e5',
+        borderColor: '#00b894',
+    },
+    medChipText: {
+        color: '#636e72',
+        fontWeight: '500',
+    },
+    medChipTextSelected: {
+        color: '#00b894',
+        fontWeight: '600',
     },
     uploadBtn: {
-        backgroundColor: '#007AFF',
-        padding: 15,
-        borderRadius: 12,
-        alignItems: 'center'
-    },
-    uploadBtnText: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold'
-    },
-    disabledBtn: {
-        backgroundColor: '#ccc'
+        marginTop: 20,
+        backgroundColor: '#00b894',
     },
 });
 

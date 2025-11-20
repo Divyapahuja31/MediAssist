@@ -5,9 +5,9 @@ export const listPrescriptions = (params) => {
 };
 
 export const uploadPrescription = (formData) => {
-    return api.post('/prescriptions', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
+    return api.post('/prescriptions/upload', formData, {
+        transformRequest: (data, headers) => {
+            return data;
         },
     });
 };
