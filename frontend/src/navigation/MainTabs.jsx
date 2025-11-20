@@ -4,6 +4,7 @@ import HomeStack from './HomeStack';
 import MedicationStack from './MedicationStack';
 import ScheduleStack from './ScheduleStack';
 import PrescriptionStack from './PrescriptionStack';
+import EmergencyCardScreen from '../screens/main/Emergency/EmergencyCardScreen';
 import ProfileStack from './ProfileStack';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -24,6 +25,8 @@ const MainTabs = () => {
                         iconName = focused ? 'alarm' : 'alarm-outline';
                     } else if (route.name === 'Prescriptions') {
                         iconName = focused ? 'document-text' : 'document-text-outline';
+                    } else if (route.name === 'Emergency') {
+                        iconName = focused ? 'warning' : 'warning-outline';
                     } else if (route.name === 'Profile') {
                         iconName = focused ? 'person' : 'person-outline';
                     }
@@ -38,6 +41,7 @@ const MainTabs = () => {
             <Tab.Screen name="Medications" component={MedicationStack} options={{ headerShown: false }} />
             <Tab.Screen name="Schedules" component={ScheduleStack} options={{ headerShown: false }} />
             <Tab.Screen name="Prescriptions" component={PrescriptionStack} options={{ headerShown: false }} />
+            <Tab.Screen name="Emergency" component={EmergencyCardScreen} options={{ headerShown: false }} />
             <Tab.Screen name="Profile" component={ProfileStack} options={{ headerShown: false }} />
         </Tab.Navigator>
     );

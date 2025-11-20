@@ -12,6 +12,7 @@ const ProfileEditScreen = ({ navigation }) => {
     const [dob, setDob] = useState('');
     const [bloodGroup, setBloodGroup] = useState('');
     const [allergies, setAllergies] = useState('');
+    const [emergencyContacts, setEmergencyContacts] = useState('');
 
     useEffect(() => {
         if (data?.data) {
@@ -21,6 +22,7 @@ const ProfileEditScreen = ({ navigation }) => {
             setDob(p.dob || '');
             setBloodGroup(p.bloodGroup || '');
             setAllergies(p.allergies ? p.allergies.join(', ') : '');
+            setEmergencyContacts(p.emergencyContacts ? JSON.stringify(p.emergencyContacts, null, 2) : '');
         }
     }, [data]);
 
@@ -36,7 +38,16 @@ const ProfileEditScreen = ({ navigation }) => {
 
     const handleSave = () => {
         const allergiesArray = allergies.split(',').map(s => s.trim()).filter(Boolean);
-        mutation.mutate({ name, phone, dob, bloodGroup, allergies: allergiesArray });
+        let contactsArray = [];
+        try {
+            if (emergencyContacts) {
+                contactsArray = JSON.parse(emergencyContacts);
+            }
+        } catch (e) {
+            Alert.alert('Error', 'Invalid JSON for Emergency Contacts');
+            return;
+        }
+        mutation.mutate({ name, phone, dob, bloodGroup, allergies: allergiesArray, emergencyContacts: contactsArray });
     };
 
     return (
@@ -55,6 +66,16 @@ const ProfileEditScreen = ({ navigation }) => {
 
             <Text style={styles.label}>Allergies (comma separated)</Text>
             <TextInput style={styles.input} value={allergies} onChangeText={setAllergies} placeholder="Peanuts, Penicillin" />
+
+            <Text style={styles.label}>Emergency Contacts (JSON)</Text>
+            <Text style={styles.helperText}>Format: {'[{"name":"Mom","phone":"123","relation":"Parent"}]'}</Text>
+            <TextInput
+                style={[styles.input, { height: 100 }]}
+                value={emergencyContacts}
+                onChangeText={setEmergencyContacts}
+                placeholder='[{"name":"Mom","phone":"123","relation":"Parent"}]'
+                multiline
+            />
 
             <TouchableOpacity style={styles.button} onPress={handleSave} disabled={mutation.isPending}>
                 {mutation.isPending ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Save Changes</Text>}
@@ -97,6 +118,12 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold'
     },
+    helperText: {
+        fontSize: 12,
+        color: '#666',
+        marginBottom: 5,
+        fontStyle: 'italic'
+    }
 });
 
 export default ProfileEditScreen;
