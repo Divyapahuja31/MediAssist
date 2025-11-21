@@ -24,7 +24,7 @@ const ProfileScreen = ({ navigation }) => {
 
     if (isLoading) return <ActivityIndicator style={styles.center} size="large" color="#00b894" />;
 
-    const profile = data?.data || {};
+    const profile = data?.data?.data || {};
     // Fallback to auth user data if profile fetch fails or is incomplete
     const displayName = profile.name || user?.name || 'User';
     const displayEmail = profile.email || user?.email || 'email@example.com';

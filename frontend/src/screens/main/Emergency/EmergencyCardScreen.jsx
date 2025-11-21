@@ -31,7 +31,10 @@ const EmergencyCardScreen = ({ navigation }) => {
             queryClient.invalidateQueries(['emergencyToken']);
             Alert.alert('Success', 'Public emergency link created');
         },
-        onError: () => Alert.alert('Error', 'Failed to create emergency link'),
+        onError: (error) => {
+            console.error('Create Token Error:', error);
+            Alert.alert('Error', 'Failed to create emergency link: ' + (error.response?.data?.message || error.message));
+        },
     });
 
     const revokeTokenMutation = useMutation({
@@ -55,7 +58,7 @@ const EmergencyCardScreen = ({ navigation }) => {
     };
 
     const handleRevokeToken = () => {
-        const token = tokenData?.data?.token;
+        const token = tokenInfo?.token;
         if (!token) return;
 
         Alert.alert(
@@ -77,7 +80,7 @@ const EmergencyCardScreen = ({ navigation }) => {
     };
 
     const handleShare = async () => {
-        const url = tokenData?.data?.url;
+        const url = tokenInfo?.url;
         if (url) {
             try {
                 await Share.share({
@@ -92,8 +95,8 @@ const EmergencyCardScreen = ({ navigation }) => {
 
     if (profileLoading) return <ActivityIndicator style={styles.center} size="large" color="#00b894" />;
 
-    const profile = profileData?.data || {};
-    const tokenInfo = tokenData?.data;
+    const profile = profileData?.data?.data || {};
+    const tokenInfo = tokenData?.data?.data;
     const hasToken = !!tokenInfo?.token;
     const emergencyContacts = profile.emergencyContacts || [];
     const allergies = profile.allergies || [];

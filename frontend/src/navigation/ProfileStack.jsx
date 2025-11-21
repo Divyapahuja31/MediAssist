@@ -17,12 +17,12 @@ const ProfileStack = () => {
             <Stack.Screen
                 name="ProfileEdit"
                 component={ProfileEditScreen}
-                options={{ title: 'Edit Profile' }}
+                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name="EmergencyCard"
                 component={EmergencyCardScreen}
-                options={{ title: 'Emergency Card' }}
+                options={{ headerShown: false }}
             />
         </Stack.Navigator>
     );
