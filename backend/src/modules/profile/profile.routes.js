@@ -11,4 +11,9 @@ router.post('/me', protect, validate(updateProfileSchema), profileController.upd
 
 router.get('/:userId/emergency', profileController.getEmergencyInfo);
 
-export default router;
+router.post('/emergency-token', protect, profileController.createEmergencyToken);
+router.get('/emergency-token', protect, profileController.getEmergencyToken);
+router.delete('/emergency-token/:token', protect, profileController.revokeEmergencyToken);
+router.get('/emergency/:token', profileController.getEmergencyInfoByToken);
+
+export default router; 

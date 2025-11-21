@@ -28,3 +28,46 @@ export const getEmergencyInfo = async (req, res, next) => {
         next(error);
     }
 };
+
+export const createEmergencyToken = async (req, res, next) => {
+    try {
+        const tokenData = await profileService.createEmergencyToken(req.user.id);
+        const url = `${req.protocol}://${req.get('host')}/api/profile/emergency/${tokenData.token}`;
+        return created(res, { ...tokenData, url }, 'Emergency token created');
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getEmergencyToken = async (req, res, next) => {
+    try {
+        const tokenData = await profileService.getEmergencyToken(req.user.id);
+        if (tokenData) {
+            const url = `${req.protocol}://${req.get('host')}/api/profile/emergency/${tokenData.token}`;
+            return ok(res, { ...tokenData, url }, 'Emergency token fetched');
+        }
+        return ok(res, {}, 'No active token');
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const revokeEmergencyToken = async (req, res, next) => {
+    try {
+        const { token } = req.params;
+        await profileService.revokeEmergencyToken(req.user.id, token);
+        return ok(res, null, 'Emergency token revoked');
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getEmergencyInfoByToken = async (req, res, next) => {
+    try {
+        const { token } = req.params;
+        const info = await profileService.getEmergencyInfoByToken(token);
+        return ok(res, info, 'Emergency info fetched');
+    } catch (error) {
+        next(error);
+    }
+};
