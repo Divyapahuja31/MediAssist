@@ -8,7 +8,13 @@ import { DateTime } from 'luxon';
 export const computeNextRunAt = (payload) => {
     const { timeOfDay, timezone = 'UTC', frequency, startDate, daysOfWeek } = payload;
 
-    let start = DateTime.fromJSDate(new Date(startDate)).setZone(timezone);
+    let start;
+    if (startDate) {
+        start = DateTime.fromJSDate(new Date(startDate)).setZone(timezone);
+    } else {
+        start = DateTime.now().setZone(timezone);
+    }
+
     const now = DateTime.now().setZone(timezone);
 
     if (start < now) {

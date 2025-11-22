@@ -25,7 +25,7 @@ export const create = async (userId, file, data) => {
             storageKey: key,
             filename: file.originalname,
             mimetype: file.mimetype,
-            size: file.size,
+            size: file.size, 
         },
     });
 };
@@ -34,7 +34,7 @@ export const listByUser = async (userId) => {
     return await prisma.prescription.findMany({
         where: { userId },
         include: { medication: true },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { uploadedAt: 'desc' },
     });
 };
 

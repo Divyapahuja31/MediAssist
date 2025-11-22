@@ -9,6 +9,7 @@ export const createScheduleSchema = Joi.object({
     startDate: Joi.date().iso().optional(),
     endDate: Joi.date().iso().optional(),
     dosage: Joi.string().optional(),
+    active: Joi.boolean().optional(),
 });
 
 export const updateScheduleSchema = Joi.object({
