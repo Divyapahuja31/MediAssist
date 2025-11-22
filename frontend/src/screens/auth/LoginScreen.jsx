@@ -121,7 +121,7 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#dfe6e9', // Light blue-grey background
+        backgroundColor: '#dfe6e9', 
     },
     headerBackground: {
         height: '45%',
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     },
     keyboardView: {
         flex: 1,
-        marginTop: -60, // Pull card up
+        marginTop: -60, 
     },
     scrollContent: {
         flexGrow: 1,
