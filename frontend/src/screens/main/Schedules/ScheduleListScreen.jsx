@@ -9,7 +9,7 @@ import ScheduleCard from '../../../components/ScheduleCard';
 
 const ScheduleListScreen = ({ navigation }) => {
     const queryClient = useQueryClient();
-    const [filter, setFilter] = useState('all'); // all, active, paused
+    const [filter, setFilter] = useState('all'); 
 
     const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['schedules'],
@@ -37,7 +37,7 @@ const ScheduleListScreen = ({ navigation }) => {
         ]);
     };
 
-    const schedules = Array.isArray(data?.data) ? data.data : [];
+    const schedules = Array.isArray(data?.data?.data) ? data.data.data : [];
 
     const filteredSchedules = schedules.filter(s => {
         if (filter === 'active') return s.active;

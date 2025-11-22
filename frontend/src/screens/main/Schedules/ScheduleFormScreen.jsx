@@ -61,7 +61,10 @@ const ScheduleFormScreen = ({ navigation, route }) => {
             navigation.goBack();
         },
         onError: (error) => {
-            Alert.alert('Error', error.response?.data?.message || 'Failed to save schedule');
+            console.error('Save Schedule Error:', error);
+            console.log('Error Response:', error.response?.data);
+            const message = error.response?.data?.error || error.response?.data?.message || error.message;
+            Alert.alert('Error', 'Failed to save schedule: ' + message);
         },
     });
 
@@ -86,14 +89,20 @@ const ScheduleFormScreen = ({ navigation, route }) => {
         if (validate()) {
             const timeOfDay = `${time.getHours().toString().padStart(2, '0')}:${time.getMinutes().toString().padStart(2, '0')}`;
 
-            mutation.mutate({
-                medicationId: parseInt(medicationId),
+            const payload = {
+                medicationId: medicationId.toString(),
                 timeOfDay,
                 frequency,
                 dosage,
                 active,
                 timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
-            });
+            };
+
+            if (frequency === 'WEEKLY') {
+                payload.daysOfWeek = [1, 2, 3, 4, 5, 6, 7]; // Default to all days for now
+            }
+
+            mutation.mutate(payload);
         }
     };
 
