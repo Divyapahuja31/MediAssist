@@ -25,7 +25,7 @@ const MedicationStack = () => {
             <Stack.Screen
                 name="MedicationForm"
                 component={MedicationFormScreen}
-                options={{ title: 'Medication' }}
+                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name="Schedules"
