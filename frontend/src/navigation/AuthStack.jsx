@@ -3,7 +3,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import OnboardingScreen from '../screens/auth/OnboardingScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getItem } from '../services/storageHelper';
+import { STORAGE_KEYS } from '../utils/constants';
 import { useState, useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
@@ -13,7 +14,7 @@ const AuthStack = () => {
     const [isFirstLaunch, setIsFirstLaunch] = useState(null);
 
     useEffect(() => {
-        AsyncStorage.getItem('hasOnboarded').then(value => {
+        getItem(STORAGE_KEYS.HAS_ONBOARDED).then(value => {
             if (value === null) {
                 setIsFirstLaunch(true);
             } else {

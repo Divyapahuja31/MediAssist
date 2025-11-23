@@ -247,9 +247,9 @@ const MedicationDetailScreen = ({ route, navigation }) => {
                                 <View style={[styles.dot, { backgroundColor: log.eventType === 'TAKEN' ? '#00b894' : '#ff7675' }]} />
                                 <View style={{ flex: 1 }}>
                                     <Text style={styles.logTitle}>{log.eventType === 'TAKEN' ? 'Taken' : 'Missed'}</Text>
-                                    <Text style={styles.logSub}>{formatDate(log.timestamp)} at {formatTime(log.timestamp)}</Text>
+                                    <Text style={styles.logSub}>{formatDate(log.takenAt)} at {formatTime(log.takenAt)}</Text>
                                 </View>
-                                <Text style={styles.logSource}>{log.source === 'MANUAL' ? 'Manual' : 'Scheduled'}</Text>
+                                <Text style={styles.logSource}>{!log.scheduleId ? 'Manual' : 'Scheduled'}</Text>
                             </View>
                         ))}
                     </View>
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
     actionButtonText: {
         fontWeight: 'bold',
         fontSize: 16,
-        color: '#00b894', 
+        color: '#00b894',
         marginLeft: 8,
     },
     card: {
@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         marginBottom: 8,
         borderLeftWidth: 4,
-        borderLeftColor: '#f0f0f0', 
+        borderLeftColor: '#f0f0f0',
     },
     dot: {
         width: 10,

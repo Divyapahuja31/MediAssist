@@ -39,12 +39,12 @@ const PrescriptionUploadScreen = ({ navigation, route }) => {
                     return;
                 }
                 result = await ImagePicker.launchCameraAsync({
-                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    mediaTypes: 'Images',
                     quality: 0.8,
                 });
             } else {
                 result = await ImagePicker.launchImageLibraryAsync({
-                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    mediaTypes: 'Images',
                     quality: 0.8,
                 });
             }
@@ -59,6 +59,7 @@ const PrescriptionUploadScreen = ({ navigation, route }) => {
                 });
             }
         } catch (error) {
+            console.error('PickImage Error:', error);
             Alert.alert('Error', 'Failed to pick image');
         }
     };
@@ -111,7 +112,7 @@ const PrescriptionUploadScreen = ({ navigation, route }) => {
 
             queryClient.invalidateQueries(['prescriptions']);
             Alert.alert('Success', 'Prescription uploaded successfully');
-            navigation.goBack();
+            navigation.navigate('PrescriptionList');
         } catch (error) {
             console.error(error);
             Alert.alert('Error', 'Failed to upload prescription');
@@ -128,7 +129,7 @@ const PrescriptionUploadScreen = ({ navigation, route }) => {
             />
             <SafeAreaView style={styles.safeArea} edges={['top']}>
                 <View style={styles.header}>
-                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+                    <TouchableOpacity onPress={() => navigation.navigate('PrescriptionList')} style={styles.backBtn}>
                         <Ionicons name="arrow-back" size={24} color="#fff" />
                     </TouchableOpacity>
                     <Text style={styles.headerTitle}>Upload Prescription</Text>

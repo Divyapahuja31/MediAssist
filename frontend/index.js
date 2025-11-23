@@ -3,6 +3,7 @@ import { registerRootComponent } from 'expo';
 import { LogBox } from 'react-native';
 import App from "./App";
 
+LogBox.ignoreLogs(['ImagePicker.MediaTypeOptions']);
 LogBox.ignoreAllLogs(true);
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);
