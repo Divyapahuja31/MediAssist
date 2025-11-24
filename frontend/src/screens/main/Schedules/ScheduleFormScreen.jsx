@@ -31,7 +31,7 @@ const ScheduleFormScreen = ({ navigation, route }) => {
         enabled: isEdit,
     });
 
-    // Fetch Medications for Dropdown (simplified as list for now)
+    // Fetch Medications for Dropdown 
     const { data: medsData } = useQuery({
         queryKey: ['medications'],
         queryFn: () => listMedications(),
@@ -40,16 +40,20 @@ const ScheduleFormScreen = ({ navigation, route }) => {
     useEffect(() => {
         if (scheduleData?.data) {
             const s = scheduleData.data;
-            setMedicationId(s.medicationId.toString());
+            if (s.medicationId) {
+                setMedicationId(s.medicationId.toString());
+            }
             setDosage(s.dosage);
             setFrequency(s.frequency);
             setActive(s.active);
 
             // Parse time
-            const [hours, minutes] = s.timeOfDay.split(':');
-            const date = new Date();
-            date.setHours(parseInt(hours), parseInt(minutes));
-            setTime(date);
+            if (s.timeOfDay) {
+                const [hours, minutes] = s.timeOfDay.split(':');
+                const date = new Date();
+                date.setHours(parseInt(hours), parseInt(minutes));
+                setTime(date);
+            }
         }
     }, [scheduleData]);
 

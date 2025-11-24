@@ -7,9 +7,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScheduleCard from '../../../components/ScheduleCard';
 
-const ScheduleListScreen = ({ navigation }) => {
+const ScheduleListScreen = ({ navigation, route }) => {
+    const fromHome = route.params?.fromHome;
     const queryClient = useQueryClient();
-    const [filter, setFilter] = useState('all'); 
+    const [filter, setFilter] = useState('all');
 
     const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['schedules'],
@@ -62,8 +63,16 @@ const ScheduleListScreen = ({ navigation }) => {
             />
             <SafeAreaView style={styles.safeArea} edges={['top']}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>Schedules</Text>
-                    <Text style={styles.subtitle}>Manage your reminders</Text>
+                    {fromHome && (
+                        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.backBtn}>
+                            <Ionicons name="arrow-back" size={24} color="#fff" />
+                        </TouchableOpacity>
+                    )}
+                    <View>
+                        <Text style={styles.title}>Schedules</Text>
+                        <Text style={styles.subtitle}>Manage your reminders</Text>
+                    </View>
+                    {fromHome && <View style={{ width: 24 }} />}
                 </View>
 
                 {/* Filter Tabs */}
@@ -133,9 +142,15 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
         paddingHorizontal: 20,
         paddingTop: 10,
         paddingBottom: 15,
+    },
+    backBtn: {
+        marginRight: 15,
     },
     title: {
         fontSize: 28,

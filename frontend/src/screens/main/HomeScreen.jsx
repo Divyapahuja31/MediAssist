@@ -84,7 +84,7 @@ const HomeScreen = ({ navigation }) => {
                         <Text style={styles.greeting}>Hello, {user?.profile?.name?.split(' ')[0] || user?.name?.split(' ')[0] || 'User'} 👋</Text>
                         <Text style={styles.date}>{today}</Text>
                     </View>
-                    <TouchableOpacity style={styles.profileBtn} onPress={() => navigation.navigate('Profile')}>
+                    <TouchableOpacity style={styles.profileBtn} onPress={() => navigation.navigate('Profile', { screen: 'ProfileMain' })}>
                         <Ionicons name="person-circle-outline" size={40} color="#fff" />
                     </TouchableOpacity>
                 </View>
@@ -129,7 +129,7 @@ const HomeScreen = ({ navigation }) => {
                                 <Text style={styles.emptyStateText}>No medications added yet</Text>
                                 <TouchableOpacity
                                     style={styles.addMedBtn}
-                                    onPress={() => navigation.navigate('Medications', { screen: 'MedicationForm' })}
+                                    onPress={() => navigation.navigate('Medications', { screen: 'MedicationForm', params: { fromHome: true } })}
                                 >
                                     <Text style={styles.addMedBtnText}>Add Your First Medication</Text>
                                 </TouchableOpacity>
@@ -145,7 +145,8 @@ const HomeScreen = ({ navigation }) => {
                                             id: med.id,
                                             initialName: med.name,
                                             initialFormulation: med.formulation,
-                                            initialStock: med.stock
+                                            initialStock: med.stock,
+                                            fromHome: true
                                         }
                                     })}
                                 />

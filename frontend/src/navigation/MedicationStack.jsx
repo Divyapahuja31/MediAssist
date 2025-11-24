@@ -30,17 +30,17 @@ const MedicationStack = () => {
             <Stack.Screen
                 name="Schedules"
                 component={ScheduleListScreen}
-                options={{ title: 'All Schedules' }}
+                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name="ScheduleForm"
                 component={ScheduleFormScreen}
-                options={{ title: 'Manage Schedule' }}
+                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name="ScheduleDetail"
                 component={ScheduleDetailScreen}
-                options={{ title: 'Schedule Details' }}
+                options={{ headerShown: false }}
             />
         </Stack.Navigator>
     );

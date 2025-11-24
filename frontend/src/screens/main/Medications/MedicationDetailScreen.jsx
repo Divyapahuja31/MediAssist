@@ -11,7 +11,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { formatTime, formatDate } from '../../../utils/formatters';
 
 const MedicationDetailScreen = ({ route, navigation }) => {
-    const { id, initialName, initialFormulation, initialStock } = route.params;
+    const { id, initialName, initialFormulation, initialStock, fromHome } = route.params;
     const queryClient = useQueryClient();
 
     // 1. Fetch Medication Details
@@ -57,7 +57,11 @@ const MedicationDetailScreen = ({ route, navigation }) => {
         mutationFn: deleteMedication,
         onSuccess: () => {
             queryClient.invalidateQueries(['medications']);
-            navigation.goBack();
+            if (fromHome) {
+                navigation.navigate('Home');
+            } else {
+                navigation.goBack();
+            }
         },
         onError: () => Alert.alert('Error', 'Failed to delete medication'),
     });
@@ -124,7 +128,13 @@ const MedicationDetailScreen = ({ route, navigation }) => {
 
             <SafeAreaView style={styles.safeArea} edges={['top']}>
                 <View style={styles.header}>
-                    <TouchableOpacity onPress={() => navigation.navigate('MedicationList')} style={styles.backBtn}>
+                    <TouchableOpacity onPress={() => {
+                        if (fromHome) {
+                            navigation.navigate('Home');
+                        } else {
+                            navigation.navigate('MedicationList');
+                        }
+                    }} style={styles.backBtn}>
                         <Ionicons name="arrow-back" size={24} color="#fff" />
                     </TouchableOpacity>
                     <View style={styles.actions}>

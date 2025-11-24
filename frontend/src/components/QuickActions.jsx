@@ -24,13 +24,13 @@ const QuickActions = ({ navigation }) => {
                 icon="add"
                 label="Add Med"
                 colors={['#00cec9', '#00b894']}
-                onPress={() => navigation.navigate('Medications', { screen: 'MedicationForm' })}
+                onPress={() => navigation.navigate('Medications', { screen: 'MedicationForm', params: { fromHome: true } })}
             />
             <QuickActionItem
                 icon="calendar"
                 label="Schedule"
                 colors={['#74b9ff', '#0984e3']}
-                onPress={() => navigation.navigate('Medications', { screen: 'Schedules' })}
+                onPress={() => navigation.navigate('Medications', { screen: 'Schedules', params: { fromHome: true } })}
             />
             <QuickActionItem
                 icon="alert-circle"

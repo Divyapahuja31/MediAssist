@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const MedicationFormScreen = ({ navigation, route }) => {
     const id = route.params?.id;
+    const fromHome = route.params?.fromHome;
     const isEdit = !!id;
     const queryClient = useQueryClient();
 
@@ -40,7 +41,11 @@ const MedicationFormScreen = ({ navigation, route }) => {
         onSuccess: () => {
             queryClient.invalidateQueries(['medications']);
             if (isEdit) queryClient.invalidateQueries(['medication', id]);
-            navigation.goBack();
+            if (fromHome) {
+                navigation.navigate('Home');
+            } else {
+                navigation.goBack();
+            }
         },
         onError: (error) => {
             Alert.alert('Error', error.response?.data?.message || 'Failed to save medication');
@@ -83,7 +88,13 @@ const MedicationFormScreen = ({ navigation, route }) => {
 
             <SafeAreaView style={styles.safeArea} edges={['top']}>
                 <View style={styles.header}>
-                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+                    <TouchableOpacity onPress={() => {
+                        if (fromHome) {
+                            navigation.navigate('Home');
+                        } else {
+                            navigation.goBack();
+                        }
+                    }} style={styles.backBtn}>
                         <Ionicons name="arrow-back" size={24} color="#fff" />
                     </TouchableOpacity>
                     <Text style={styles.headerTitle}>{isEdit ? 'Edit Medication' : 'Add Medication'}</Text>
