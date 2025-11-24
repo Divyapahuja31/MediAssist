@@ -22,7 +22,7 @@ export const config = {
   jwtSecret: process.env.JWT_SECRET,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN,
   s3BucketName: process.env.S3_BUCKET_NAME,
-  s3Region: process.env.S3_REGION,
+  s3Region: process.env.S3_REGION || 'us-east-1',
   s3AccessKeyId: process.env.S3_ACCESS_KEY_ID,
   s3SecretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
   expoAccessToken: process.env.EXPO_ACCESS_TOKEN,

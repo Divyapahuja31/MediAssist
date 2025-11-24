@@ -1,11 +1,15 @@
 import prisma from '../../config/db.js';
 
 export const createLog = async (userId, data) => {
+    const { medicationId, scheduleId, eventType, timestamp } = data;
+
     return await prisma.adherenceLog.create({
         data: {
             userId,
-            ...data,
-            takenAt: new Date(),
+            medicationId,
+            scheduleId,
+            eventType,
+            takenAt: timestamp ? new Date(timestamp) : new Date(),
         },
     });
 };

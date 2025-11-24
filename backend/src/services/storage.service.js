@@ -1,55 +1,42 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
-import { getSignedUrl as awsGetSignedUrl } from '@aws-sdk/s3-request-presigner';
+import fs from 'fs/promises';
+import path from 'path';
 import { config } from '../config/env.js';
 import logger from '../utils/logger.js';
 
-const s3Client = new S3Client({
-    region: config.s3Region,
-    credentials: {
-        accessKeyId: config.s3AccessKeyId,
-        secretAccessKey: config.s3SecretAccessKey,
-    },
-});
+const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
+
+
+(async () => {
+    try {
+        await fs.mkdir(UPLOAD_DIR, { recursive: true });
+    } catch (err) {
+        logger.error('Failed to create upload directory:', err);
+    }
+})();
 
 export const uploadFile = async (buffer, key, mimetype) => {
     try {
-        const command = new PutObjectCommand({
-            Bucket: config.s3BucketName,
-            Key: key,
-            Body: buffer,
-            ContentType: mimetype,
-        });
-
-        await s3Client.send(command);
+        const filePath = path.join(UPLOAD_DIR, key);
+        await fs.writeFile(filePath, buffer);
         return key;
     } catch (error) {
-        logger.error('S3 Upload Error:', error);
+        logger.error('Local Upload Error:', error);
         throw error;
     }
 };
 
-export const getSignedUrl = async (key, expiresIn = 3600) => {
-    try {
-        const command = new GetObjectCommand({
-            Bucket: config.s3BucketName,
-            Key: key,
-        });
-        return await awsGetSignedUrl(s3Client, command, { expiresIn });
-    } catch (error) {
-        logger.error('S3 Signed URL Error:', error);
-        throw error;
-    }
+export const getSignedUrl = async (key) => {
+    return `http://localhost:${config.port}/uploads/${key}`;
 };
 
 export const deleteFile = async (key) => {
     try {
-        const command = new DeleteObjectCommand({
-            Bucket: config.s3BucketName,
-            Key: key,
-        });
-        await s3Client.send(command);
+        const filePath = path.join(UPLOAD_DIR, key);
+        await fs.unlink(filePath);
     } catch (error) {
-        logger.error('S3 Delete Error:', error);
-        throw error;
+        logger.error('Local Delete Error:', error);
+        if (error.code !== 'ENOENT') {
+            throw error;
+        }
     }
 };
