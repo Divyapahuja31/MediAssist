@@ -11,9 +11,9 @@ const { width, height } = Dimensions.get('window');
 const slides = [
     {
         id: '1',
-        title: 'Your Health, Simplified',
+        title: 'Simplify Your Health',
         description: 'Manage medications, appointments, and wellness for you & family in one intuitive app.',
-        icon: 'phone-portrait-outline',
+        icon: 'heart-circle-outline',
         subIcons: ['medkit-outline', 'calendar-outline', 'pie-chart-outline']
     },
     {
@@ -25,7 +25,7 @@ const slides = [
     },
     {
         id: '3',
-        title: 'Emergency Info, Instantly Accessible',
+        title: 'Emergency Info',
         description: 'Keep your vital medical data secure and accessible with a tap for first responders.',
         icon: 'qr-code-outline',
         subIcons: ['shield-checkmark-outline', 'document-text-outline', 'medical-outline']
@@ -60,30 +60,45 @@ const OnboardingScreen = ({ navigation }) => {
         }
     }).current;
 
-    const renderItem = ({ item }) => {
+    const renderItem = ({ item, index }) => {
         return (
             <View style={styles.slide}>
-                <View style={styles.illustrationContainer}>
-                    <View style={styles.mainIconCircle}>
-                        <Ionicons name={item.icon} size={80} color="#00b894" />
+                <View style={styles.card}>
+                    <View style={styles.illustrationContainer}>
+                        <View style={styles.mainIconCircle}>
+                            <Ionicons name={item.icon} size={80} color="#00b894" />
+                        </View>
+                        {/* Decorative sub-icons */}
+                        <View style={[styles.subIcon, { top: -10, left: 10 }]}>
+                            <Ionicons name={item.subIcons[0]} size={24} color="#00cec9" />
+                        </View>
+                        <View style={[styles.subIcon, { top: 30, right: -20 }]}>
+                            <Ionicons name={item.subIcons[1]} size={24} color="#55efc4" />
+                        </View>
+                        <View style={[styles.subIcon, { bottom: -10, left: -10 }]}>
+                            <Ionicons name={item.subIcons[2]} size={24} color="#81ecec" />
+                        </View>
+                        {/* Dashed circle effect */}
+                        <View style={styles.dashedCircle} />
                     </View>
-                    {/* Decorative sub-icons */}
-                    <View style={[styles.subIcon, { top: -20, left: 20 }]}>
-                        <Ionicons name={item.subIcons[0]} size={30} color="#00cec9" />
-                    </View>
-                    <View style={[styles.subIcon, { top: 40, right: -30 }]}>
-                        <Ionicons name={item.subIcons[1]} size={30} color="#55efc4" />
-                    </View>
-                    <View style={[styles.subIcon, { bottom: -20, left: -20 }]}>
-                        <Ionicons name={item.subIcons[2]} size={30} color="#81ecec" />
-                    </View>
-                    {/* Dashed circle effect (simulated with border) */}
-                    <View style={styles.dashedCircle} />
-                </View>
 
-                <View style={styles.textContainer}>
-                    <Text style={styles.title}>{item.title}</Text>
-                    <Text style={styles.description}>{item.description}</Text>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.title}>{item.title}</Text>
+                        <Text style={styles.description}>{item.description}</Text>
+                    </View>
+
+                    <TouchableOpacity style={styles.cardButton} onPress={handleNext}>
+                        <LinearGradient
+                            colors={['#00b894', '#00cec9']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
+                            style={styles.cardButtonGradient}
+                        >
+                            <Text style={styles.cardButtonText}>
+                                {index === slides.length - 1 ? 'Get Started' : 'Next'}
+                            </Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
                 </View>
             </View>
         );
@@ -99,9 +114,9 @@ const OnboardingScreen = ({ navigation }) => {
                 {/* Header */}
                 <View style={styles.header}>
                     <View style={styles.logoContainer}>
-                        <Ionicons name="sparkles" size={16} color="#fff" style={{ marginRight: 5 }} />
+                        <Ionicons name="sparkles" size={18} color="#fff" style={{ marginRight: 8 }} />
                         <Text style={styles.logoText}>MediAssist</Text>
-                        <Ionicons name="sparkles" size={16} color="#fff" style={{ marginLeft: 5 }} />
+                        <Ionicons name="sparkles" size={18} color="#fff" style={{ marginLeft: 8 }} />
                     </View>
                     <Text style={styles.tagline}>Your Health Companion</Text>
                     <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
@@ -125,18 +140,11 @@ const OnboardingScreen = ({ navigation }) => {
                     onViewableItemsChanged={onViewableItemsChanged}
                     viewabilityConfig={{ viewAreaCoveragePercentThreshold: 50 }}
                     scrollEventThrottle={32}
+                    contentContainerStyle={{ alignItems: 'center' }}
                 />
 
-                {/* Footer */}
+                {/* Footer (Pagination only) */}
                 <View style={styles.footer}>
-                    <TouchableOpacity style={styles.button} onPress={handleNext}>
-                        <View style={styles.buttonGradient}>
-                            <Text style={styles.buttonText}>
-                                {currentIndex === slides.length - 1 ? 'Get Started' : 'Next'}
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-
                     <View style={styles.pagination}>
                         {slides.map((_, index) => {
                             const inputRange = [(index - 1) * width, index * width, (index + 1) * width];
@@ -147,7 +155,7 @@ const OnboardingScreen = ({ navigation }) => {
                             });
                             const opacity = scrollX.interpolate({
                                 inputRange,
-                                outputRange: [0.3, 1, 0.3],
+                                outputRange: [0.5, 1, 0.5],
                                 extrapolate: 'clamp',
                             });
 
@@ -171,7 +179,7 @@ const OnboardingScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#00b894',
     },
     background: {
         position: 'absolute',
@@ -185,8 +193,8 @@ const styles = StyleSheet.create({
     },
     header: {
         alignItems: 'center',
-        paddingTop: 20,
-        paddingBottom: 10,
+        paddingTop: 10,
+        paddingBottom: 20,
         position: 'relative',
         zIndex: 10,
     },
@@ -195,19 +203,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     logoText: {
-        fontSize: 24,
+        fontSize: 26,
         fontWeight: 'bold',
         color: '#fff',
+        letterSpacing: 0.5,
     },
     tagline: {
         fontSize: 14,
         color: 'rgba(255, 255, 255, 0.9)',
-        marginTop: 5,
+        marginTop: 4,
     },
     skipButton: {
         position: 'absolute',
-        right: 20,
-        top: 25,
+        right: 25,
+        top: 20,
     },
     skipText: {
         color: '#fff',
@@ -218,103 +227,112 @@ const styles = StyleSheet.create({
         width: width,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingHorizontal: 40,
+        paddingHorizontal: 20,
+    },
+    card: {
+        width: '100%',
+        backgroundColor: '#fff',
+        borderRadius: 30,
+        paddingVertical: 40,
+        paddingHorizontal: 20,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.15,
+        shadowRadius: 20,
+        elevation: 10,
+        height: height * 0.65, // Fixed height for consistency
+        justifyContent: 'space-between', // Distribute content
     },
     illustrationContainer: {
-        width: 250,
-        height: 250,
+        width: 200,
+        height: 200,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 50,
+        marginTop: 20,
     },
     mainIconCircle: {
-        width: 140,
-        height: 140,
-        backgroundColor: '#fff',
-        borderRadius: 70,
+        width: 100,
+        height: 100,
+        backgroundColor: '#f0fdfa', // Very light teal
+        borderRadius: 50,
         justifyContent: 'center',
         alignItems: 'center',
-        elevation: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 5 },
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
         zIndex: 2,
     },
     subIcon: {
         position: 'absolute',
         backgroundColor: '#fff',
-        padding: 8,
-        borderRadius: 20,
-        elevation: 5,
+        padding: 6,
+        borderRadius: 15,
+        elevation: 3,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
-        shadowRadius: 4,
+        shadowRadius: 2,
         zIndex: 3,
     },
     dashedCircle: {
         position: 'absolute',
-        width: 220,
-        height: 220,
-        borderRadius: 110,
-        borderWidth: 2,
-        borderColor: 'rgba(255, 255, 255, 0.5)',
+        width: 180,
+        height: 180,
+        borderRadius: 90,
+        borderWidth: 1.5,
+        borderColor: '#00b894',
         borderStyle: 'dashed',
         zIndex: 1,
+        opacity: 0.5,
     },
     textContainer: {
         alignItems: 'center',
+        paddingHorizontal: 10,
+        marginTop: 20,
     },
     title: {
-        fontSize: 28,
+        fontSize: 24,
         fontWeight: 'bold',
-        color: '#fff',
+        color: '#2d3436',
         textAlign: 'center',
-        marginBottom: 15,
+        marginBottom: 10,
     },
     description: {
-        fontSize: 16,
-        color: '#f0f0f0',
+        fontSize: 15,
+        color: '#636e72',
         textAlign: 'center',
-        lineHeight: 24,
+        lineHeight: 22,
     },
-    footer: {
-        paddingHorizontal: 40,
-        paddingBottom: 50,
-        alignItems: 'center',
-    },
-    button: {
+    cardButton: {
         width: '100%',
-        marginBottom: 30,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.2,
-        shadowRadius: 8,
-        elevation: 5,
-        backgroundColor: '#fff',
-        borderRadius: 30,
+        marginTop: 30,
+        borderRadius: 25,
+        overflow: 'hidden',
     },
-    buttonGradient: {
-        paddingVertical: 18,
-        borderRadius: 30,
+    cardButtonGradient: {
+        paddingVertical: 16,
         alignItems: 'center',
-        backgroundColor: '#fff', // Fallback
+        justifyContent: 'center',
     },
-    buttonText: {
-        color: '#00b894',
+    cardButtonText: {
+        color: '#fff',
         fontSize: 18,
         fontWeight: 'bold',
+    },
+    footer: {
+        paddingBottom: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 60,
     },
     pagination: {
         flexDirection: 'row',
         height: 10,
+        alignItems: 'center',
     },
     dot: {
         height: 10,
         borderRadius: 5,
         backgroundColor: '#fff',
-        marginHorizontal: 5,
+        marginHorizontal: 6,
     },
 });
 

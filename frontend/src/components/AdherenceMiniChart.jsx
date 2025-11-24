@@ -15,7 +15,7 @@ const AdherenceMiniChart = ({ summary }) => {
                 </View>
                 <View>
                     <Text style={styles.label}>Streak</Text>
-                    <Text style={styles.value}>{streak} days</Text>
+                    <Text style={styles.value}>{streak} days</Text> 
                 </View>
             </View>
 

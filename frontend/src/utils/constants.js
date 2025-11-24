@@ -15,7 +15,7 @@ export const STORAGE_KEYS = {
 import { Platform } from 'react-native';
 
 const PORT = 5001;
-const DEV_MACHINE_IP = '11.6.1.209'; 
+const DEV_MACHINE_IP = '11.6.1.209';
 
 export const API_BASE_URL = Platform.select({
     ios: `http://localhost:${PORT}`,
