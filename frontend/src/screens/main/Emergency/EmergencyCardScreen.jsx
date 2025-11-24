@@ -9,7 +9,8 @@ import QRCode from 'react-native-qrcode-svg';
 import { getAvatarUrl } from '../../../api/api';
 import { Image } from 'react-native';
 
-const EmergencyCardScreen = ({ navigation }) => {
+const EmergencyCardScreen = ({ navigation, route }) => {
+    const fromHome = route.params?.fromHome;
     const queryClient = useQueryClient();
     const [showQrModal, setShowQrModal] = useState(false);
 
@@ -109,6 +110,16 @@ const EmergencyCardScreen = ({ navigation }) => {
             />
             <SafeAreaView style={styles.safeArea} edges={['top']}>
                 <View style={styles.header}>
+                    <TouchableOpacity onPress={() => {
+                        if (fromHome) {
+                            navigation.goBack();
+                            navigation.navigate('Home');
+                        } else {
+                            navigation.goBack();
+                        }
+                    }} style={styles.backBtn}>
+                        <Ionicons name="arrow-back" size={24} color="#fff" />
+                    </TouchableOpacity>
                     <Text style={styles.headerTitle}>Emergency Card</Text>
                     <TouchableOpacity onPress={() => navigation.navigate('Profile', { screen: 'ProfileEdit' })}>
                         <Ionicons name="create-outline" size={24} color="#fff" />
@@ -243,6 +254,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingTop: 10,
         paddingBottom: 20,
+    },
+    backBtn: {
+        padding: 5,
     },
     headerTitle: {
         fontSize: 24,

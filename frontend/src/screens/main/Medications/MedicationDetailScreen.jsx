@@ -58,6 +58,7 @@ const MedicationDetailScreen = ({ route, navigation }) => {
         onSuccess: () => {
             queryClient.invalidateQueries(['medications']);
             if (fromHome) {
+                navigation.goBack();
                 navigation.navigate('Home');
             } else {
                 navigation.goBack();
@@ -130,6 +131,7 @@ const MedicationDetailScreen = ({ route, navigation }) => {
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => {
                         if (fromHome) {
+                            navigation.goBack();
                             navigation.navigate('Home');
                         } else {
                             navigation.navigate('MedicationList');

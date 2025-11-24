@@ -42,6 +42,7 @@ const MedicationFormScreen = ({ navigation, route }) => {
             queryClient.invalidateQueries(['medications']);
             if (isEdit) queryClient.invalidateQueries(['medication', id]);
             if (fromHome) {
+                navigation.goBack();
                 navigation.navigate('Home');
             } else {
                 navigation.goBack();
@@ -90,6 +91,7 @@ const MedicationFormScreen = ({ navigation, route }) => {
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => {
                         if (fromHome) {
+                            navigation.goBack();
                             navigation.navigate('Home');
                         } else {
                             navigation.goBack();
