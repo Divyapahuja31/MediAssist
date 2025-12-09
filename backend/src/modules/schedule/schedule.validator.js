@@ -13,6 +13,7 @@ export const createScheduleSchema = Joi.object({
 });
 
 export const updateScheduleSchema = Joi.object({
+    medicationId: Joi.string().optional(),
     timeOfDay: Joi.string().pattern(/^\d{1,2}:\d{2}$/).optional(),
     timezone: Joi.string().optional(),
     frequency: Joi.string().valid('DAILY', 'WEEKLY', 'ONCE').optional(),
