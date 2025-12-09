@@ -7,7 +7,7 @@ const InputField = ({ label, value, onChangeText, placeholder, secureTextEntry, 
             {label && <Text style={styles.label}>{label}</Text>}
             <TextInput
                 style={[styles.input, error && styles.inputError, multiline && styles.multiline]}
-                value={value}
+                value={value || ''}
                 onChangeText={onChangeText}
                 placeholder={placeholder}
                 secureTextEntry={secureTextEntry}

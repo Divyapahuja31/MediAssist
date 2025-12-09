@@ -16,7 +16,13 @@ const LoginScreen = ({ navigation }) => {
 
     const handleLogin = async () => {
         if (!email || !password) {
-            Alert.alert('Error', 'Please fill in all fields');
+            Alert.alert('Missing Fields', 'Please fill in your email and password');
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            Alert.alert('Invalid Email', 'Please enter a valid email address');
             return;
         }
 
@@ -32,34 +38,34 @@ const LoginScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <LinearGradient
-                colors={['#00b894', '#00cec9']}
-                style={styles.headerBackground}
-            >
-                <SafeAreaView style={styles.safeHeader}>
-                    <View style={styles.appTitleContainer}>
-                        <Ionicons name="medical" size={24} color="#fff" style={{ marginRight: 8 }} />
-                        <Text style={styles.appTitle}>MediAssist</Text>
-                        <Ionicons name="medical" size={24} color="#fff" style={{ marginLeft: 8 }} />
-                    </View>
-                    <Text style={styles.appSubtitle}>Your Health Companion</Text>
-
-                    <View style={styles.logoContainer}>
-                        <View style={styles.logoCircle}>
-                            <Ionicons name="person" size={40} color="#00b894" />
-                            <View style={styles.keyIcon}>
-                                <Ionicons name="key" size={16} color="#fff" />
-                            </View>
-                        </View>
-                    </View>
-                </SafeAreaView>
-            </LinearGradient>
-
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={styles.keyboardView}
             >
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+                    <LinearGradient
+                        colors={['#00b894', '#00cec9']}
+                        style={styles.headerBackground}
+                    >
+                        <SafeAreaView style={styles.safeHeader}>
+                            <View style={styles.appTitleContainer}>
+                                <Ionicons name="medical" size={24} color="#fff" style={{ marginRight: 8 }} />
+                                <Text style={styles.appTitle}>MediAssist</Text>
+                                <Ionicons name="medical" size={24} color="#fff" style={{ marginLeft: 8 }} />
+                            </View>
+                            <Text style={styles.appSubtitle}>Your Health Companion</Text>
+
+                            <View style={styles.logoContainer}>
+                                <View style={styles.logoCircle}>
+                                    <Ionicons name="person" size={40} color="#00b894" />
+                                    <View style={styles.keyIcon}>
+                                        <Ionicons name="key" size={16} color="#fff" />
+                                    </View>
+                                </View>
+                            </View>
+                        </SafeAreaView>
+                    </LinearGradient>
+
                     <View style={styles.card}>
                         <Text style={styles.welcomeText}>Welcome Back</Text>
 
@@ -121,14 +127,16 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#dfe6e9', 
+        backgroundColor: '#dfe6e9',
     },
     headerBackground: {
-        height: '45%',
+        height: 300,
         width: '100%',
         alignItems: 'center',
         borderBottomLeftRadius: 30,
         borderBottomRightRadius: 30,
+        marginBottom: -40,
+        zIndex: 1,
     },
     safeHeader: {
         alignItems: 'center',
@@ -177,13 +185,9 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: '#fff',
     },
-    keyboardView: {
-        flex: 1,
-        marginTop: -60, 
-    },
+    flex: 1,
     scrollContent: {
         flexGrow: 1,
-        paddingHorizontal: 20,
         paddingBottom: 20,
     },
     card: {
@@ -196,6 +200,9 @@ const styles = StyleSheet.create({
         shadowRadius: 20,
         elevation: 10,
         minHeight: 400,
+        marginHorizontal: 20,
+        marginTop: 0,
+        zIndex: 2,
     },
     welcomeText: {
         fontSize: 24,

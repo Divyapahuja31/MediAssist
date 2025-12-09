@@ -38,14 +38,16 @@ const ScheduleFormScreen = ({ navigation, route }) => {
     });
 
     useEffect(() => {
-        if (scheduleData?.data) {
-            const s = scheduleData.data;
+        if (scheduleData?.data?.data) {
+            const s = scheduleData.data.data;
+            console.log('Populating Schedule Data:', s);
+
             if (s.medicationId) {
                 setMedicationId(s.medicationId.toString());
             }
-            setDosage(s.dosage);
-            setFrequency(s.frequency);
-            setActive(s.active);
+            setDosage(s.dosage || '');
+            setFrequency(s.frequency || 'DAILY');
+            setActive(s.active !== false);
 
             // Parse time
             if (s.timeOfDay) {
@@ -80,7 +82,7 @@ const ScheduleFormScreen = ({ navigation, route }) => {
             newErrors.medicationId = 'Please select a medication';
             valid = false;
         }
-        if (!dosage.trim()) {
+        if (!dosage?.trim()) {
             newErrors.dosage = 'Dosage is required';
             valid = false;
         }

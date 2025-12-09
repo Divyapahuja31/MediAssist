@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { getProfile, upsertProfile } from '../../../api/profile';
 
@@ -91,71 +91,76 @@ const ProfileEditScreen = ({ navigation }) => {
                     <View style={{ width: 24 }} />
                 </View>
 
-                <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-                    <View style={styles.card}>
-                        <Text style={styles.label}>Name</Text>
-                        <TextInput style={styles.input} value={name} onChangeText={setName} />
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    style={{ flex: 1 }}
+                >
+                    <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+                        <View style={styles.card}>
+                            <Text style={styles.label}>Name</Text>
+                            <TextInput style={styles.input} value={name} onChangeText={setName} />
 
-                        <Text style={styles.label}>Phone</Text>
-                        <TextInput style={styles.input} value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
+                            <Text style={styles.label}>Phone</Text>
+                            <TextInput style={styles.input} value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
 
-                        <Text style={styles.label}>Date of Birth (YYYY-MM-DD)</Text>
-                        <TextInput style={styles.input} value={dob} onChangeText={setDob} placeholder="YYYY-MM-DD" />
+                            <Text style={styles.label}>Date of Birth (YYYY-MM-DD)</Text>
+                            <TextInput style={styles.input} value={dob} onChangeText={setDob} placeholder="YYYY-MM-DD" />
 
-                        <Text style={styles.label}>Blood Group</Text>
-                        <TextInput style={styles.input} value={bloodGroup} onChangeText={setBloodGroup} placeholder="e.g. O+" />
+                            <Text style={styles.label}>Blood Group</Text>
+                            <TextInput style={styles.input} value={bloodGroup} onChangeText={setBloodGroup} placeholder="e.g. O+" />
 
-                        <Text style={styles.label}>Allergies (comma separated)</Text>
-                        <TextInput style={styles.input} value={allergies} onChangeText={setAllergies} placeholder="Peanuts, Penicillin" />
+                            <Text style={styles.label}>Allergies (comma separated)</Text>
+                            <TextInput style={styles.input} value={allergies} onChangeText={setAllergies} placeholder="Peanuts, Penicillin" />
 
-                        <Text style={styles.label}>Emergency Contacts</Text>
-                        {emergencyContacts.length > 0 ? (
-                            emergencyContacts.map((contact, index) => (
-                                <View key={index} style={styles.contactItem}>
-                                    <View style={{ flex: 1 }}>
-                                        <Text style={styles.contactName}>{contact.name} ({contact.relation})</Text>
-                                        <Text style={styles.contactPhone}>{contact.phone}</Text>
+                            <Text style={styles.label}>Emergency Contacts</Text>
+                            {emergencyContacts.length > 0 ? (
+                                emergencyContacts.map((contact, index) => (
+                                    <View key={index} style={styles.contactItem}>
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={styles.contactName}>{contact.name} ({contact.relation})</Text>
+                                            <Text style={styles.contactPhone}>{contact.phone}</Text>
+                                        </View>
+                                        <TouchableOpacity onPress={() => removeContact(index)} style={styles.removeBtn}>
+                                            <Ionicons name="trash-outline" size={20} color="#ff7675" />
+                                        </TouchableOpacity>
                                     </View>
-                                    <TouchableOpacity onPress={() => removeContact(index)} style={styles.removeBtn}>
-                                        <Ionicons name="trash-outline" size={20} color="#ff7675" />
-                                    </TouchableOpacity>
-                                </View>
-                            ))
-                        ) : (
-                            <Text style={styles.helperText}>No emergency contacts added yet.</Text>
-                        )}
+                                ))
+                            ) : (
+                                <Text style={styles.helperText}>No emergency contacts added yet.</Text>
+                            )}
 
-                        <View style={styles.addContactBox}>
-                            <Text style={styles.subLabel}>Add New Contact</Text>
-                            <TextInput
-                                style={styles.smallInput}
-                                placeholder="Name"
-                                value={newContactName}
-                                onChangeText={setNewContactName}
-                            />
-                            <TextInput
-                                style={styles.smallInput}
-                                placeholder="Phone"
-                                value={newContactPhone}
-                                onChangeText={setNewContactPhone}
-                                keyboardType="phone-pad"
-                            />
-                            <TextInput
-                                style={styles.smallInput}
-                                placeholder="Relation (e.g. Spouse, Parent)"
-                                value={newContactRelation}
-                                onChangeText={setNewContactRelation}
-                            />
-                            <TouchableOpacity style={styles.addBtn} onPress={addContact}>
-                                <Text style={styles.addBtnText}>Add Contact</Text>
+                            <View style={styles.addContactBox}>
+                                <Text style={styles.subLabel}>Add New Contact</Text>
+                                <TextInput
+                                    style={styles.smallInput}
+                                    placeholder="Name"
+                                    value={newContactName}
+                                    onChangeText={setNewContactName}
+                                />
+                                <TextInput
+                                    style={styles.smallInput}
+                                    placeholder="Phone"
+                                    value={newContactPhone}
+                                    onChangeText={setNewContactPhone}
+                                    keyboardType="phone-pad"
+                                />
+                                <TextInput
+                                    style={styles.smallInput}
+                                    placeholder="Relation (e.g. Spouse, Parent)"
+                                    value={newContactRelation}
+                                    onChangeText={setNewContactRelation}
+                                />
+                                <TouchableOpacity style={styles.addBtn} onPress={addContact}>
+                                    <Text style={styles.addBtnText}>Add Contact</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            <TouchableOpacity style={styles.button} onPress={handleSave} disabled={mutation.isPending}>
+                                {mutation.isPending ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Save Changes</Text>}
                             </TouchableOpacity>
                         </View>
-
-                        <TouchableOpacity style={styles.button} onPress={handleSave} disabled={mutation.isPending}>
-                            {mutation.isPending ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Save Changes</Text>}
-                        </TouchableOpacity>
-                    </View>
-                </ScrollView>
+                    </ScrollView>
+                </KeyboardAvoidingView>
             </SafeAreaView>
         </View>
     );

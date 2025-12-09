@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getMedication, deleteMedication } from '../../../api/medications';
 import { listSchedules } from '../../../api/schedules';
 import { listPrescriptions } from '../../../api/prescriptions';
-import { listAdherenceLogs, createAdherenceLog, getAdherenceSummary } from '../../../api/adherence';
+import { listAdherenceLogs, getAdherenceSummary } from '../../../api/adherence';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { formatTime, formatDate } from '../../../utils/formatters';
@@ -67,16 +67,6 @@ const MedicationDetailScreen = ({ route, navigation }) => {
         onError: () => Alert.alert('Error', 'Failed to delete medication'),
     });
 
-    const logDoseMutation = useMutation({
-        mutationFn: (data) => createAdherenceLog(data),
-        onSuccess: () => {
-            queryClient.invalidateQueries(['adherence']);
-            queryClient.invalidateQueries(['adherenceSummary']);
-            Alert.alert('Success', 'Dose logged successfully');
-        },
-        onError: () => Alert.alert('Error', 'Failed to log dose'),
-    });
-
     const handleDelete = () => {
         const hasSchedules = schedulesData?.data?.length > 0;
         const hasPrescriptions = prescriptionsData?.data?.length > 0;
@@ -92,20 +82,7 @@ const MedicationDetailScreen = ({ route, navigation }) => {
         ]);
     };
 
-    const handleManualDose = () => {
-        Alert.alert('Log Manual Dose', 'Did you take this medication just now?', [
-            { text: 'Cancel', style: 'cancel' },
-            {
-                text: 'Yes, Log it',
-                onPress: () => logDoseMutation.mutate({
-                    medicationId: id,
-                    eventType: 'TAKEN',
-                    timestamp: new Date().toISOString(),
-                    source: 'MANUAL'
-                })
-            },
-        ]);
-    };
+
     const fetchedMedication = medData?.data;
     const medication = {
         ...fetchedMedication,
@@ -171,13 +148,7 @@ const MedicationDetailScreen = ({ route, navigation }) => {
                             <Text style={styles.actionButtonText}>Add Schedule</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity
-                            style={[styles.actionButton, styles.secondaryAction]}
-                            onPress={handleManualDose}
-                        >
-                            <Ionicons name="checkmark-circle-outline" size={20} color="#00b894" />
-                            <Text style={[styles.actionButtonText, { color: '#00b894' }]}>Log Dose</Text>
-                        </TouchableOpacity>
+
                     </View>
 
                     {/* Notes */}
@@ -361,13 +332,6 @@ const styles = StyleSheet.create({
     },
     primaryAction: {
         backgroundColor: '#fff',
-        marginRight: 10,
-    },
-    secondaryAction: {
-        backgroundColor: '#fff',
-        marginLeft: 10,
-        borderWidth: 1,
-        borderColor: '#00b894',
     },
     actionButtonText: {
         fontWeight: 'bold',
